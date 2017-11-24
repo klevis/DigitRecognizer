@@ -30,9 +30,14 @@ public class UI {
         mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
 
-        drawAndDigitPredictionPanel = new JPanel(new GridLayout(1,2));
+        JPanel topPanel = new JPanel(new FlowLayout());
+        topPanel.add(new JButton("Recognize Digit"));
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+
+        drawAndDigitPredictionPanel = new JPanel(new GridLayout());
         drawArea = new DrawArea();
         DrawArea drawArea2 = new DrawArea();
+
         drawAndDigitPredictionPanel.add(drawArea);
         drawAndDigitPredictionPanel.add(drawArea2);
         mainPanel.add(drawAndDigitPredictionPanel, BorderLayout.CENTER);
