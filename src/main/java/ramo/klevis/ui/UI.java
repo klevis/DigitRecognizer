@@ -1,9 +1,15 @@
 package ramo.klevis.ui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 
@@ -31,7 +37,23 @@ public class UI {
         mainPanel.setLayout(new BorderLayout());
 
         JPanel topPanel = new JPanel(new FlowLayout());
-        topPanel.add(new JButton("Recognize Digit"));
+        JButton recognize = new JButton("Recognize Digit");
+        recognize.addActionListener(e -> {
+
+            Image img = drawArea.getImage();
+            BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB);
+
+            // Draw the image on to the buffered image
+            Graphics2D bGr = bimage.createGraphics();
+            bGr.drawImage(img, 0, 0, null);
+
+            try {
+                ImageIO.write(bimage, "jpg", new File("img.jpg"));
+            } catch (IOException e1) {
+                throw new RuntimeException(e1);
+            }
+        });
+        topPanel.add(recognize);
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
         drawAndDigitPredictionPanel = new JPanel(new GridLayout());

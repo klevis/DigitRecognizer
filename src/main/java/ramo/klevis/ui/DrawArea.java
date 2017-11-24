@@ -79,4 +79,7 @@ public class DrawArea extends JComponent {
         repaint();
     }
 
+    public Image getImage() {
+        return image;
+    }
 }
