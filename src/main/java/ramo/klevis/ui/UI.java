@@ -1,5 +1,7 @@
 package ramo.klevis.ui;
 
+import ramo.klevis.nn.NeuralNetwork;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +40,17 @@ public class UI {
 
         JPanel topPanel = new JPanel(new FlowLayout());
         JButton recognize = new JButton("Recognize Digit");
+        JButton train = new JButton("Train NN");
+        train.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    new NeuralNetwork().train();
+                } catch (IOException e1) {
+                    throw new RuntimeException(e1);
+                }
+            }
+        });
         recognize.addActionListener(e -> {
 
             Image img = drawArea.getImage();
@@ -54,6 +67,7 @@ public class UI {
             }
         });
         topPanel.add(recognize);
+        topPanel.add(train);
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
         drawAndDigitPredictionPanel = new JPanel(new GridLayout());
