@@ -145,7 +145,7 @@ public class UI {
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 Color color = new Color(img.getRGB(i, j), true);
-                imageGray[index] = (color.getBlue() + color.getRed() + color.getGreen()) / 3;
+                imageGray[index] = 255 - ((color.getBlue() + color.getRed() + color.getGreen()) / 3d);
                 index++;
             }
         }
