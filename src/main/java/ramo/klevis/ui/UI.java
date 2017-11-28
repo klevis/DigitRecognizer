@@ -1,11 +1,11 @@
 package ramo.klevis.ui;
 
-import org.apache.spark.sql.catalyst.expressions.In;
+import com.mortennobel.imagescaling.ResampleFilters;
+import com.mortennobel.imagescaling.ResampleOp;
+import ramo.klevis.data.LabeledImage;
 import ramo.klevis.nn.NeuralNetwork;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -20,6 +20,7 @@ public class UI {
 
     private static final int FRAME_WIDTH = 1200;
     private static final int FRAME_HEIGHT = 628;
+    private final NeuralNetwork neuralNetwork = new NeuralNetwork();
 
     private DrawArea drawArea;
     private JFrame mainFrame;
@@ -30,7 +31,7 @@ public class UI {
     private int TRAIN_SIZE = 30000;
     private final Font sansSerifBold = new Font("SansSerif", Font.BOLD, 18);
     private final Font sansSerifItalic = new Font("SansSerif", Font.ITALIC, 18);
-    private int TEST_SIZE=10000;
+    private int TEST_SIZE = 10000;
     private SpinnerNumberModel modelTestSize;
     private JSpinner testField;
 
@@ -50,30 +51,33 @@ public class UI {
         JPanel topPanel = new JPanel(new FlowLayout());
         JButton recognize = new JButton("Recognize Digit");
         JButton train = new JButton("Train NN");
-        train.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    new NeuralNetwork().train((Integer)trainField.getValue(),(Integer)testField.getValue());
-                } catch (IOException e1) {
-                    throw new RuntimeException(e1);
-                }
+        train.addActionListener(e -> {
+            try {
+                neuralNetwork.train((Integer) trainField.getValue(), (Integer) testField.getValue());
+            } catch (IOException e1) {
+                throw new RuntimeException(e1);
             }
         });
         recognize.addActionListener(e -> {
 
-            Image img = drawArea.getImage();
-            BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB);
-
-            // Draw the image on to the buffered image
-            Graphics2D bGr = bimage.createGraphics();
-            bGr.drawImage(img, 0, 0, null);
-
+            Image drawImage = drawArea.getImage();
+            BufferedImage sbi = toBufferedImage(drawImage);
+            Image scaled = scale(sbi);
             try {
-                ImageIO.write(bimage, "jpg", new File("img.jpg"));
+                ImageIO.write(toBufferedImage(drawImage), "jpg", new File("img2.jpg"));
             } catch (IOException e1) {
                 throw new RuntimeException(e1);
             }
+            try {
+                ImageIO.write(toBufferedImage(scaled), "jpg", new File("img.jpg"));
+            } catch (IOException e1) {
+                throw new RuntimeException(e1);
+            }
+            double[] pixels = transformImageToOneDimensionalVector(toBufferedImage(scaled));
+            LabeledImage labeledImage = new LabeledImage(0, pixels);
+            neuralNetwork.init();
+            LabeledImage predict = neuralNetwork.predict(labeledImage);
+            System.out.println("predict = " + predict);
         });
         topPanel.add(recognize);
         topPanel.add(train);
@@ -108,6 +112,44 @@ public class UI {
         mainFrame.add(mainPanel);
         mainFrame.setVisible(true);
 
+    }
+
+    public static BufferedImage scale(BufferedImage imageToScale) {
+        ResampleOp resizeOp = new ResampleOp(28, 28);
+        resizeOp.setFilter(ResampleFilters.getLanczos3Filter());
+        BufferedImage filter = resizeOp.filter(imageToScale, null);
+        return filter;
+    }
+
+    public static BufferedImage toBufferedImage(Image img) {
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
+    }
+
+
+    public double[] transformImageToOneDimensionalVector(BufferedImage img) {
+
+        double[] imageGray = new double[28 * 28];
+        int w = img.getWidth();
+        int h = img.getHeight();
+        int index = 0;
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                Color color = new Color(img.getRGB(i, j), true);
+                imageGray[index] = (color.getBlue() + color.getRed() + color.getGreen()) / 3;
+                index++;
+            }
+        }
+        return imageGray;
     }
 
 

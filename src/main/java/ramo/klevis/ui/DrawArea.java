@@ -44,6 +44,7 @@ public class DrawArea extends JComponent {
                 currentY = e.getY();
 
                 if (g2 != null) {
+                    g2.setStroke(new BasicStroke(20));
                     // draw line if g2 context not null
                     g2.drawLine(oldX, oldY, currentX, currentY);
                     // refresh draw area to repaint

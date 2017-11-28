@@ -28,4 +28,11 @@ public class LabeledImage implements Serializable {
     public void setLabel(double label) {
         this.label = label;
     }
+
+    @Override
+    public String toString() {
+        return "LabeledImage{" +
+                "label=" + label +
+                '}';
+    }
 }

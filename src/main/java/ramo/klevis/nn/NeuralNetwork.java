@@ -22,6 +22,14 @@ public class NeuralNetwork {
 
     private SparkSession sparkSession;
     private IdxReader idxReader;
+    private MultilayerPerceptronClassificationModel load;
+
+    public void init() {
+        initSparkSession();
+        if (load == null) {
+            load = MultilayerPerceptronClassificationModel.load("C:\\Users\\klevis.ramo\\Desktop\\ModelWith40000");
+        }
+    }
 
     public void train(Integer trainData, Integer testFieldValue) throws IOException {
 
@@ -68,5 +76,11 @@ public class NeuralNetwork {
         }
 
         sparkSession.sparkContext().setCheckpointDir("checkPoint");
+    }
+
+    public LabeledImage predict(LabeledImage labeledImage) {
+        double predict = load.predict(labeledImage.getFeatures());
+        labeledImage.setLabel(predict);
+        return labeledImage;
     }
 }
