@@ -6,41 +6,33 @@ package ramo.klevis.nn;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
 import org.apache.spark.ml.classification.MultilayerPerceptronClassificationModel;
 import org.apache.spark.ml.classification.MultilayerPerceptronClassifier;
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
 import ramo.klevis.data.IdxReader;
 import ramo.klevis.data.LabeledImage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class NeuralNetwork {
 
     private SparkSession sparkSession;
+    private IdxReader idxReader;
 
-    public void train() throws IOException {
+    public void train(Integer trainData, Integer testFieldValue) throws IOException {
 
         initSparkSession();
 
-        String path = "src/main/resources/a.txt";
-        Dataset<Row> dataFrame1 = sparkSession.read().format("libsvm").load(path);
+        idxReader = new IdxReader();
+        List<LabeledImage> labeledImages = idxReader.loadData(trainData);
+        List<LabeledImage> testLabeledImages = idxReader.loadTestData(testFieldValue);
+        Dataset<Row> train = sparkSession.createDataFrame(labeledImages, LabeledImage.class).checkpoint();
+        Dataset<Row> test = sparkSession.createDataFrame(testLabeledImages, LabeledImage.class).checkpoint();
 
-//// Load training data
-//        String path = "data/mllib/sample_multiclass_classification_data.txt";
-//        Dataset<Row> dataFrame = sparkSession.read().format("libsvm").load(path);
-        List<LabeledImage> labeledImages = new IdxReader().loadData();
-        Dataset<Row> dataFrame = sparkSession.createDataFrame(labeledImages, LabeledImage.class);
-
-
-// Split the data into train and test
-        Dataset<Row>[] splits = dataFrame.randomSplit(new double[]{0.6, 0.4}, 1234L);
-        Dataset<Row> train = splits[0];
-        Dataset<Row> test = splits[1];
 
 // specify layers for the neural network:
 // input layer of size 4 (features), two intermediate of size 5 and 4
@@ -57,6 +49,7 @@ public class NeuralNetwork {
 // train the model
         MultilayerPerceptronClassificationModel model = trainer.fit(train);
 
+        model.save("C:\\Users\\klevis.ramo\\Desktop\\ModelWith" + trainData);
 // compute accuracy on the test set
         Dataset<Row> result = model.transform(test);
         Dataset<Row> predictionAndLabels = result.select("prediction", "label");
@@ -66,11 +59,6 @@ public class NeuralNetwork {
         System.out.println("Test set accuracy = " + evaluator.evaluate(predictionAndLabels));
     }
 
-    private JavaSparkContext createSparkContext() {
-        SparkConf conf = new SparkConf().setAppName("Movie Recomender").setMaster("local[*]");
-        return new JavaSparkContext(conf);
-    }
-
     private void initSparkSession() {
         if (sparkSession == null) {
             sparkSession = SparkSession.builder()
@@ -78,5 +66,7 @@ public class NeuralNetwork {
                     .appName("Online Retailer")
                     .getOrCreate();
         }
+
+        sparkSession.sparkContext().setCheckpointDir("checkPoint");
     }
 }

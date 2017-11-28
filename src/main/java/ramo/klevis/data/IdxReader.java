@@ -1,24 +1,25 @@
 package ramo.klevis.data;
 
-import org.apache.spark.sql.catalyst.expressions.In;
-
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.stream.Stream;
+import java.util.List;
 
 public class IdxReader {
 
-    public java.util.List<LabeledImage> loadData() throws IOException {
-        FileInputStream inImage = null;
-        FileInputStream inLabel = null;
+    public java.util.List<LabeledImage> loadData(int size) throws IOException {
 
         String inputImagePath = "src/main/resources/train-images.idx3-ubyte";
         String inputLabelPath = "src/main/resources/train-labels.idx1-ubyte";
 
-        String outputPath = "src/main/resources/";
+        return getLabeledImages(inputImagePath, inputLabelPath, size);
+    }
+
+    private List<LabeledImage> getLabeledImages(String inputImagePath, String inputLabelPath, int number) throws IOException {
+        FileInputStream inLabel = null;
+        FileInputStream inImage = null;
 
         HashMap<Integer, Integer> labelMap = new HashMap<>();
 
@@ -37,11 +38,11 @@ public class IdxReader {
             BufferedImage image = new BufferedImage(numberOfColumns, numberOfRows, BufferedImage.TYPE_INT_ARGB);
             int numberOfPixels = numberOfRows * numberOfColumns;
             double[] imgPixels = new double[numberOfPixels];
-            java.util.List<LabeledImage> all = new ArrayList();
+            List<LabeledImage> all = new ArrayList();
 
             long start = System.currentTimeMillis();
             int currentLabel = 0;
-            for (int i = 0; i < 500; i++) {
+            for (int i = 0; i < number; i++) {
 
                 if (i % 1000 == 0) {
                     System.out.println("Number of images extracted: " + i);
@@ -78,5 +79,14 @@ public class IdxReader {
             }
         }
     }
+
+    public java.util.List<LabeledImage> loadTestData(int size) throws IOException {
+
+        String inputImagePath = "src/main/resources/t10k-images.idx3-ubyte";
+        String inputLabelPath = "src/main/resources/t10k-labels.idx1-ubyte";
+
+        return getLabeledImages(inputImagePath, inputLabelPath, size);
+    }
+
 
 }

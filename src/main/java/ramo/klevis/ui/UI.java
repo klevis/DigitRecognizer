@@ -1,5 +1,6 @@
 package ramo.klevis.ui;
 
+import org.apache.spark.sql.catalyst.expressions.In;
 import ramo.klevis.nn.NeuralNetwork;
 
 import java.awt.*;
@@ -24,6 +25,14 @@ public class UI {
     private JFrame mainFrame;
     private JPanel mainPanel;
     private JPanel drawAndDigitPredictionPanel;
+    private SpinnerNumberModel modelTrainSize;
+    private JSpinner trainField;
+    private int TRAIN_SIZE = 30000;
+    private final Font sansSerifBold = new Font("SansSerif", Font.BOLD, 18);
+    private final Font sansSerifItalic = new Font("SansSerif", Font.ITALIC, 18);
+    private int TEST_SIZE=10000;
+    private SpinnerNumberModel modelTestSize;
+    private JSpinner testField;
 
     public UI() throws Exception {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -45,7 +54,7 @@ public class UI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    new NeuralNetwork().train();
+                    new NeuralNetwork().train((Integer)trainField.getValue(),(Integer)testField.getValue());
                 } catch (IOException e1) {
                     throw new RuntimeException(e1);
                 }
@@ -68,6 +77,22 @@ public class UI {
         });
         topPanel.add(recognize);
         topPanel.add(train);
+        JLabel tL = new JLabel("Training Data");
+        tL.setFont(sansSerifBold);
+        topPanel.add(tL);
+        modelTrainSize = new SpinnerNumberModel(TRAIN_SIZE, 10000, 60000, 1000);
+        trainField = new JSpinner(modelTrainSize);
+        trainField.setFont(sansSerifBold);
+        topPanel.add(trainField);
+
+        JLabel ttL = new JLabel("Test Data");
+        ttL.setFont(sansSerifBold);
+        topPanel.add(ttL);
+        modelTestSize = new SpinnerNumberModel(TEST_SIZE, 1000, 10000, 500);
+        testField = new JSpinner(modelTestSize);
+        testField.setFont(sansSerifBold);
+        topPanel.add(testField);
+
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
         drawAndDigitPredictionPanel = new JPanel(new GridLayout());
