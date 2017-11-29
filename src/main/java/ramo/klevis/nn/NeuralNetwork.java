@@ -12,13 +12,8 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import ramo.klevis.data.IdxReader;
 import ramo.klevis.data.LabeledImage;
-import ramo.klevis.ui.UI;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 public class NeuralNetwork {
@@ -26,38 +21,11 @@ public class NeuralNetwork {
     private SparkSession sparkSession;
     private IdxReader idxReader = new IdxReader();
     private MultilayerPerceptronClassificationModel model;
-    private List<LabeledImage> testLabeledImages;
 
     public void init() {
         initSparkSession();
         if (model == null) {
-            model = MultilayerPerceptronClassificationModel.load("C:\\Users\\klevis.ramo\\Desktop\\ModelWith60000");
-        }
-        try {
-            if (testLabeledImages == null) {
-                testLabeledImages = idxReader.loadTestData(10000);
-
-                Dataset<Row> test = sparkSession.createDataFrame(testLabeledImages, LabeledImage.class).checkpoint();
-                evalOnTest(test);
-
-                File[] files = new File("src/main/resources/predict").listFiles();
-                for (File file : files) {
-                    try {
-                        BufferedImage image = ImageIO.read(file);
-                        double[] doubles = UI.transformImageToOneDimensionalVector(image);
-                        LabeledImage labeledImage = new LabeledImage(0, doubles);
-                        double predict = model.predict(labeledImage.getFeatures());
-                        System.out.println("predict = " + predict + "   " + file.getName());
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            model = MultilayerPerceptronClassificationModel.load("ModelWith60000");
         }
     }
 
@@ -82,8 +50,6 @@ public class NeuralNetwork {
                 .setMaxIter(100);
 
         model = trainer.fit(train);
-
-        model.save("C:\\Users\\klevis.ramo\\Desktop\\ModelWith" + trainData);
 
         evalOnTest(test);
         evalOnTest(train);

@@ -1,22 +1,16 @@
 package ramo.klevis.data;
 
-import ramo.klevis.ui.UI;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class IdxReader {
 
     public java.util.List<LabeledImage> loadData(int size) throws IOException {
 
-        String inputImagePath = "src/main/resources/train-images.idx3-ubyte";
-        String inputLabelPath = "src/main/resources/train-labels.idx1-ubyte";
+        String inputImagePath = "resources/train-images.idx3-ubyte";
+        String inputLabelPath = "resources/train-labels.idx1-ubyte";
 
         return getLabeledImages(inputImagePath, inputLabelPath, size);
     }
@@ -53,16 +47,7 @@ public class IdxReader {
                 }
 
                 int label = inLabel.read();
-//                UI.debug(imgPixels);
-//                double[] doubles = UI.transformImageToOneDimensionalVector(ImageIO.read(new File("lale" + ".png")));
-//                for (int j = 0; j < doubles.length; j++) {
-//                    if (doubles[j] != imgPixels[j]) {
-//                        System.out.println(doubles[j] + " # " + imgPixels[j]);
-//                    }
-//                }
-
                 all.add(new LabeledImage(label, imgPixels));
-
             }
             System.out.println("Time in seconds" + ((System.currentTimeMillis() - start) / 1000d));
             return all;
@@ -79,8 +64,8 @@ public class IdxReader {
 
     public java.util.List<LabeledImage> loadTestData(int size) throws IOException {
 
-        String inputImagePath = "src/main/resources/t10k-images.idx3-ubyte";
-        String inputLabelPath = "src/main/resources/t10k-labels.idx1-ubyte";
+        String inputImagePath = "resources/t10k-images.idx3-ubyte";
+        String inputLabelPath = "resources/t10k-labels.idx1-ubyte";
 
         return getLabeledImages(inputImagePath, inputLabelPath, size);
     }
