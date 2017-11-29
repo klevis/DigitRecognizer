@@ -34,7 +34,7 @@ public class ProgressBar {
             progressBar.setStringPainted(true);
             progressBar.setIndeterminate(true);
             progressBar.setVisible(true);
-            mainFrame.add(progressBar);
+            mainFrame.add(progressBar, BorderLayout.NORTH);
             if (unDecoreate) {
                 mainFrame.pack();
                 mainFrame.setVisible(true);

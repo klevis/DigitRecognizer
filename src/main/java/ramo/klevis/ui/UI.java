@@ -73,9 +73,10 @@ public class UI {
             LabeledImage labeledImage = new LabeledImage(0, scaledPixels);
             LabeledImage predict = neuralNetwork.predict(labeledImage);
             JLabel predictNumber = new JLabel("" + (int) predict.getLabel());
-            predictNumber.setFont(new Font("SansSerif", Font.BOLD, 32));
+            predictNumber.setForeground(Color.RED);
+            predictNumber.setFont(new Font("SansSerif", Font.BOLD, 128));
             resultPanel.removeAll();
-            resultPanel.add(predictNumber, BorderLayout.CENTER);
+            resultPanel.add(predictNumber);
             resultPanel.updateUI();
 
         });
@@ -97,6 +98,7 @@ public class UI {
 
         drawAndDigitPredictionPanel.add(drawArea);
         resultPanel = new JPanel();
+        resultPanel.setLayout(new GridBagLayout());
         drawAndDigitPredictionPanel.add(resultPanel);
     }
 
