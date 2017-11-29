@@ -6,6 +6,8 @@ import ramo.klevis.data.LabeledImage;
 import ramo.klevis.nn.NeuralNetwork;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -62,6 +64,7 @@ public class UI {
 
             Image drawImage = drawArea.getImage();
             BufferedImage sbi = toBufferedImage(drawImage);
+
             Image scaled = scale(sbi);
             try {
                 ImageIO.write(toBufferedImage(drawImage), "jpg", new File("img2.jpg"));
@@ -69,18 +72,34 @@ public class UI {
                 throw new RuntimeException(e1);
             }
             try {
-                ImageIO.write(toBufferedImage(scaled), "jpg", new File("img.jpg"));
+                ImageIO.write(toBufferedImage(scaled), "png", new File("img.png"));
             } catch (IOException e1) {
                 throw new RuntimeException(e1);
             }
-            double[] pixels = transformImageToOneDimensionalVector(toBufferedImage(scaled));
-            LabeledImage labeledImage = new LabeledImage(0, pixels);
-            neuralNetwork.init();
-            LabeledImage predict = neuralNetwork.predict(labeledImage);
-            System.out.println("predict = " + predict);
+            BufferedImage scaledReady = toBufferedImage(scaled);
+
+            double[] pixels = transformImageToOneDimensionalVector(scaledReady);
+            debug(pixels);
+            try {
+                BufferedImage read = ImageIO.read(new File("lale" + ".png"));
+                double[] doubles = transformImageToOneDimensionalVector(read);
+                LabeledImage labeledImage = new LabeledImage(0, doubles);
+                neuralNetwork.init();
+                LabeledImage predict = neuralNetwork.predict(labeledImage);
+                System.out.println("predict = " + predict);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         });
         topPanel.add(recognize);
         topPanel.add(train);
+        JButton clear = new JButton("Clear");
+        topPanel.add(clear);
+        clear.addActionListener(e -> {
+            drawArea.setImage(null);
+            drawArea.repaint();
+            drawAndDigitPredictionPanel.updateUI();
+        });
         JLabel tL = new JLabel("Training Data");
         tL.setFont(sansSerifBold);
         topPanel.add(tL);
@@ -114,6 +133,25 @@ public class UI {
 
     }
 
+    public static void debug(double[] pixels) {
+        int[] imgPixels = new int[pixels.length];
+        BufferedImage image = new BufferedImage(28, 28, BufferedImage.TYPE_INT_ARGB);
+        int p = 0;
+        for (double pixel : pixels) {
+            int gray = (int) (255 - pixel);
+            imgPixels[p] = 0xFF000000 | (gray << 16) | (gray << 8) | gray;
+            p++;
+        }
+        image.setRGB(0, 0, 28, 28, imgPixels, 0, 28);
+        File outputfile = new File("lale" + ".png");
+
+        try {
+            ImageIO.write(image, "png", outputfile);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
+
     public static BufferedImage scale(BufferedImage imageToScale) {
         ResampleOp resizeOp = new ResampleOp(28, 28);
         resizeOp.setFilter(ResampleFilters.getLanczos3Filter());
@@ -122,9 +160,8 @@ public class UI {
     }
 
     public static BufferedImage toBufferedImage(Image img) {
-
         // Create a buffered image with transparency
-        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB);
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 
         // Draw the image on to the buffered image
         Graphics2D bGr = bimage.createGraphics();
@@ -136,7 +173,7 @@ public class UI {
     }
 
 
-    public double[] transformImageToOneDimensionalVector(BufferedImage img) {
+    public static double[] transformImageToOneDimensionalVector(BufferedImage img) {
 
         double[] imageGray = new double[28 * 28];
         int w = img.getWidth();
@@ -144,8 +181,12 @@ public class UI {
         int index = 0;
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                Color color = new Color(img.getRGB(i, j), true);
-                imageGray[index] = 255 - ((color.getBlue() + color.getRed() + color.getGreen()) / 3d);
+                Color color = new Color(img.getRGB(j, i), true);
+                int red = (color.getRed());
+                int green = (color.getGreen());
+                int blue = (color.getBlue());
+                double v = 255 - (red + green + blue) / 3d;
+                imageGray[index] = v;
                 index++;
             }
         }

@@ -15,14 +15,13 @@ import javax.swing.border.TitledBorder;
  */
 public class DrawArea extends JComponent {
 
+    private final Font sansSerifBold = new Font("SansSerif", Font.BOLD, 18);
     // Image in which we're going to draw
     private Image image;
     // Graphics2D object ==> used to draw on
     private Graphics2D g2;
     // Mouse coordinates
     private int currentX, currentY, oldX, oldY;
-    private final Font sansSerifBold = new Font("SansSerif", Font.BOLD, 18);
-
     public DrawArea() {
         setDoubleBuffered(false);
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
@@ -44,7 +43,7 @@ public class DrawArea extends JComponent {
                 currentY = e.getY();
 
                 if (g2 != null) {
-                    g2.setStroke(new BasicStroke(20));
+                    g2.setStroke(new BasicStroke(10));
                     // draw line if g2 context not null
                     g2.drawLine(oldX, oldY, currentX, currentY);
                     // refresh draw area to repaint
@@ -71,7 +70,6 @@ public class DrawArea extends JComponent {
         g.drawImage(image, 0, 0, null);
     }
 
-    // now we create exposed methods
     public void clear() {
         g2.setPaint(Color.white);
         // draw white on entire draw area to clear
@@ -82,5 +80,9 @@ public class DrawArea extends JComponent {
 
     public Image getImage() {
         return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
     }
 }

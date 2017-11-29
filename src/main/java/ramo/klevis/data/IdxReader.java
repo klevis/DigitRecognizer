@@ -1,6 +1,10 @@
 package ramo.klevis.data;
 
+import ramo.klevis.ui.UI;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,8 +25,6 @@ public class IdxReader {
         FileInputStream inLabel = null;
         FileInputStream inImage = null;
 
-        HashMap<Integer, Integer> labelMap = new HashMap<>();
-
         try {
             inImage = new FileInputStream(inputImagePath);
             inLabel = new FileInputStream(inputLabelPath);
@@ -35,13 +37,11 @@ public class IdxReader {
             int magicNumberLabels = (inLabel.read() << 24) | (inLabel.read() << 16) | (inLabel.read() << 8) | (inLabel.read());
             int numberOfLabels = (inLabel.read() << 24) | (inLabel.read() << 16) | (inLabel.read() << 8) | (inLabel.read());
 
-            BufferedImage image = new BufferedImage(numberOfColumns, numberOfRows, BufferedImage.TYPE_INT_ARGB);
             int numberOfPixels = numberOfRows * numberOfColumns;
             double[] imgPixels = new double[numberOfPixels];
             List<LabeledImage> all = new ArrayList();
 
             long start = System.currentTimeMillis();
-            int currentLabel = 0;
             for (int i = 0; i < number; i++) {
 
                 if (i % 1000 == 0) {
@@ -49,23 +49,20 @@ public class IdxReader {
                 }
 
                 for (int p = 0; p < numberOfPixels; p++) {
-                    int gray = 255 - inImage.read();
-                    imgPixels[p] = 0xFF000000 | (gray << 16) | (gray << 8) | gray;
+                    imgPixels[p] = inImage.read();
                 }
-
-//                image.setRGB(0, 0, numberOfColumns, numberOfRows, imgPixels, 0, numberOfColumns);
 
                 int label = inLabel.read();
-                Integer labelID = labelMap.get(label);
-                if (labelID == null) {
-                    labelID = currentLabel;
-                    labelMap.put(label, currentLabel++);
-                }
+//                UI.debug(imgPixels);
+//                double[] doubles = UI.transformImageToOneDimensionalVector(ImageIO.read(new File("lale" + ".png")));
+//                for (int j = 0; j < doubles.length; j++) {
+//                    if (doubles[j] != imgPixels[j]) {
+//                        System.out.println(doubles[j] + " # " + imgPixels[j]);
+//                    }
+//                }
 
                 all.add(new LabeledImage(label, imgPixels));
-//                File outputfile = new File(outputPath + label + "_0" + hashMap[label] + ".png");
 
-//                ImageIO.write(image, "png", outputfile);
             }
             System.out.println("Time in seconds" + ((System.currentTimeMillis() - start) / 1000d));
             return all;
