@@ -1,5 +1,6 @@
 # DigitRecognizer
-Java Digit Recognizer Application 
+Java Digit Recognizer Application
+
 
 License to EPL https://www.eclipse.org/legal/epl-v10.html
 
