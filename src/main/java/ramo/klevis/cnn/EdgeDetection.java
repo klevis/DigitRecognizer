@@ -5,21 +5,59 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by klevis.ramo on 12/7/2017.
  */
 public class EdgeDetection {
 
+    private static final double[][] FILTER_VERTICAL = {{1, 0, -1}, {1, 0, -1}, {1, 0, -1}};
+    private static final double[][] FILTER_HORIZONTAL = {{1, 1, 1}, {0, 0, 0}, {-1, -1, -1}};
+    private static int count = 1;
+
     public static void main(String[] args) throws IOException {
         detectVerticalEdges();
+        detectHorizontalEdges();
     }
+
+    private static void detectHorizontalEdges() throws IOException {
+        BufferedImage bufferedImage = ImageIO.read(new File("resources/smallGirl.png"));
+
+        double[][][] image = transformImageToArray(bufferedImage);
+        double[][] finalConv = applyConvolution(bufferedImage.getWidth(), bufferedImage.getHeight(), image, FILTER_HORIZONTAL);
+        reCreateOriginalImageFromMatrix(bufferedImage, finalConv);
+    }
+
 
     private static void detectVerticalEdges() throws IOException {
         BufferedImage bufferedImage = ImageIO.read(new File("resources/smallGirl.png"));
+        double[][][] image = transformImageToArray(bufferedImage);
+        double[][] finalConv = applyConvolution(bufferedImage.getWidth(), bufferedImage.getHeight(), image, FILTER_VERTICAL);
+        reCreateOriginalImageFromMatrix(bufferedImage, finalConv);
+    }
 
+    private static double[][][] transformImageToArray(BufferedImage bufferedImage) {
         int width = bufferedImage.getWidth();
         int height = bufferedImage.getHeight();
+        return transformImageToArray(bufferedImage, width, height);
+    }
+
+    private static double[][] applyConvolution(int width, int height, double[][][] image, double[][] filter) {
+        Convolution convolution = new Convolution();
+        double[][] redConv = convolution.convolutionType1(image[0], height, width, filter, 3, 3, 1);
+        double[][] greenConv = convolution.convolutionType1(image[1], height, width, filter, 3, 3, 1);
+        double[][] blueConv = convolution.convolutionType1(image[2], height, width, filter, 3, 3, 1);
+        double[][] finalConv = new double[redConv.length][redConv[0].length];
+        for (int i = 0; i < redConv.length; i++) {
+            for (int j = 0; j < redConv[i].length; j++) {
+                finalConv[i][j] = redConv[i][j] + greenConv[i][j] + blueConv[i][j];
+            }
+        }
+        return finalConv;
+    }
+
+    private static double[][][] transformImageToArray(BufferedImage bufferedImage, int width, int height) {
         double[][][] image = new double[3][height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -29,17 +67,7 @@ public class EdgeDetection {
                 image[2][i][j] = color.getBlue();
             }
         }
-        Convolution convolution = new Convolution();
-        double[][] redConv = convolution.convolutionType1(image[0], height, width, new double[][]{{1, 0, -1}, {1, 0, -1}, {1, 0, -1}}, 3, 3, 1);
-        double[][] greenConv = convolution.convolutionType1(image[1], height, width, new double[][]{{1, 0, -1}, {1, 0, -1}, {1, 0, -1}}, 3, 3, 1);
-        double[][] blueConv = convolution.convolutionType1(image[2], height, width, new double[][]{{1, 0, -1}, {1, 0, -1}, {1, 0, -1}}, 3, 3, 1);
-        double[][] finalConv = new double[redConv.length][redConv[0].length];
-        for (int i = 0; i < redConv.length; i++) {
-            for (int j = 0; j < redConv[i].length; j++) {
-                finalConv[i][j] = redConv[i][j] + greenConv[i][j] + blueConv[i][j];
-            }
-        }
-        reCreateOriginalImageFromMatrix(bufferedImage, finalConv);
+        return image;
     }
 
     private static void reCreateOriginalImageFromMatrix(BufferedImage originalImage, double[][] imageRGB) throws IOException {
@@ -50,7 +78,7 @@ public class EdgeDetection {
                 writeBackImage.setRGB(j, i, color.getRGB());
             }
         }
-        File outputFile = new File("edges.png");
+        File outputFile = new File("edges" + count++ + ".png");
         ImageIO.write(writeBackImage, "png", outputFile);
     }
 
