@@ -14,11 +14,21 @@ public class EdgeDetection {
 
     private static final double[][] FILTER_VERTICAL = {{1, 0, -1}, {1, 0, -1}, {1, 0, -1}};
     private static final double[][] FILTER_HORIZONTAL = {{1, 1, 1}, {0, 0, 0}, {-1, -1, -1}};
+    private static final double[][] FILTER_SOBEL = {{1, 0, -1}, {2, 0, -2}, {1, 0, -1}};
     private static int count = 1;
 
     public static void main(String[] args) throws IOException {
         detectVerticalEdges();
         detectHorizontalEdges();
+        detectSobelEdges();
+    }
+
+    private static void detectSobelEdges() throws IOException {
+        BufferedImage bufferedImage = ImageIO.read(new File("resources/smallGirl.png"));
+
+        double[][][] image = transformImageToArray(bufferedImage);
+        double[][] finalConv = applyConvolution(bufferedImage.getWidth(), bufferedImage.getHeight(), image, FILTER_SOBEL);
+        reCreateOriginalImageFromMatrix(bufferedImage, finalConv);
     }
 
     private static void detectHorizontalEdges() throws IOException {
