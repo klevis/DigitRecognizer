@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by klevis.ramo on 12/7/2017.
@@ -15,16 +14,35 @@ public class EdgeDetection {
     private static final double[][] FILTER_VERTICAL = {{1, 0, -1}, {1, 0, -1}, {1, 0, -1}};
     private static final double[][] FILTER_HORIZONTAL = {{1, 1, 1}, {0, 0, 0}, {-1, -1, -1}};
     private static final double[][] FILTER_SOBEL = {{1, 0, -1}, {2, 0, -2}, {1, 0, -1}};
+    private static final String INPUT_IMAGE = "resources/hInput.png";
     private static int count = 1;
 
     public static void main(String[] args) throws IOException {
+
+        double[][] doubles = new Convolution().convolutionType1(new double[][]{
+                        {255, 255, 255, 255, 255, 255},
+                        {255, 255, 255, 255, 255, 255},
+                        {255, 255, 255, 255, 255, 255},
+                        {255, 255, 255, 255, 255, 255},
+                        {10, 10, 10, 10, 10, 10},
+                        {10, 10, 10, 10, 10, 10},
+                        {10, 10, 10, 10, 10, 10},
+                        {10, 10, 10, 10, 10, 10}},
+                8, 6, FILTER_HORIZONTAL, 3, 3, 1);
+
+        for (int i = 0; i < doubles.length; i++) {
+            for (int j = 0; j < doubles[i].length; j++) {
+                System.out.print(doubles[i][j]+" ");
+            }
+            System.out.println();
+        }
         detectVerticalEdges();
         detectHorizontalEdges();
         detectSobelEdges();
     }
 
     private static void detectSobelEdges() throws IOException {
-        BufferedImage bufferedImage = ImageIO.read(new File("resources/smallGirl.png"));
+        BufferedImage bufferedImage = ImageIO.read(new File(INPUT_IMAGE));
 
         double[][][] image = transformImageToArray(bufferedImage);
         double[][] finalConv = applyConvolution(bufferedImage.getWidth(), bufferedImage.getHeight(), image, FILTER_SOBEL);
@@ -32,7 +50,7 @@ public class EdgeDetection {
     }
 
     private static void detectHorizontalEdges() throws IOException {
-        BufferedImage bufferedImage = ImageIO.read(new File("resources/smallGirl.png"));
+        BufferedImage bufferedImage = ImageIO.read(new File(INPUT_IMAGE));
 
         double[][][] image = transformImageToArray(bufferedImage);
         double[][] finalConv = applyConvolution(bufferedImage.getWidth(), bufferedImage.getHeight(), image, FILTER_HORIZONTAL);
@@ -41,7 +59,7 @@ public class EdgeDetection {
 
 
     private static void detectVerticalEdges() throws IOException {
-        BufferedImage bufferedImage = ImageIO.read(new File("resources/smallGirl.png"));
+        BufferedImage bufferedImage = ImageIO.read(new File(INPUT_IMAGE));
         double[][][] image = transformImageToArray(bufferedImage);
         double[][] finalConv = applyConvolution(bufferedImage.getWidth(), bufferedImage.getHeight(), image, FILTER_VERTICAL);
         reCreateOriginalImageFromMatrix(bufferedImage, finalConv);
@@ -84,7 +102,9 @@ public class EdgeDetection {
         BufferedImage writeBackImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
         for (int i = 0; i < imageRGB.length; i++) {
             for (int j = 0; j < imageRGB[i].length; j++) {
-                Color color = new Color(fixOutOfRangeValues(imageRGB[i][j]), fixOutOfRangeValues(imageRGB[i][j]), fixOutOfRangeValues(imageRGB[i][j]));
+                Color color = new Color(fixOutOfRangeRGBValues(imageRGB[i][j]),
+                        fixOutOfRangeRGBValues(imageRGB[i][j]),
+                        fixOutOfRangeRGBValues(imageRGB[i][j]));
                 writeBackImage.setRGB(j, i, color.getRGB());
             }
         }
@@ -92,7 +112,7 @@ public class EdgeDetection {
         ImageIO.write(writeBackImage, "png", outputFile);
     }
 
-    private static int fixOutOfRangeValues(double value) {
+    private static int fixOutOfRangeRGBValues(double value) {
         if (value < 0) {
             return 0;
         } else if (value > 255) {
