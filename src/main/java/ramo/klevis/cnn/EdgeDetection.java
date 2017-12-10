@@ -14,7 +14,7 @@ public class EdgeDetection {
     private static final double[][] FILTER_VERTICAL = {{1, 0, -1}, {1, 0, -1}, {1, 0, -1}};
     private static final double[][] FILTER_HORIZONTAL = {{1, 1, 1}, {0, 0, 0}, {-1, -1, -1}};
     private static final double[][] FILTER_SOBEL = {{1, 0, -1}, {2, 0, -2}, {1, 0, -1}};
-    private static final String INPUT_IMAGE = "resources/hInput.png";
+    private static final String INPUT_IMAGE = "resources/smallGirl.png";
     private static int count = 1;
 
     public static void main(String[] args) throws IOException {
@@ -116,7 +116,7 @@ public class EdgeDetection {
         if (value < 0) {
             return 0;
         } else if (value > 255) {
-            return 255;
+            return 0;
         } else {
             return (int) value;
         }
