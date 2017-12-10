@@ -7,12 +7,19 @@
     <groupId>ramo.klevis.ml</groupId>
     <artifactId>DigitRecognizer</artifactId>
     <version>1.0-SNAPSHOT</version>
-<repositories>
-    <repository>
-        <id>a</id>
-        <url>http://repo1.maven.org/maven2/</url>
-    </repository>
-</repositories>
+
+    <properties>
+        <slf4j.version>1.7.25</slf4j.version>
+        <log4j.version>2.8.1</log4j.version>
+    </properties>
+
+
+    <repositories>
+        <repository>
+            <id>a</id>
+            <url>http://repo1.maven.org/maven2/</url>
+        </repository>
+    </repositories>
     <!--    <repositories>
             <repository><id>a</id><url>https://mvnrepository.com/artifact/org.apache.spark/spark-core_2.10</url></repository>
         </repositories>-->
@@ -23,6 +30,55 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_2.11</artifactId>
             <version>2.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--LOGGER-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-ext -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-ext</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <!-- Binding for Log4J -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <!-- Log4j API and Core implementation required for binding -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-web</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-mllib_2.10 -->
@@ -110,6 +166,9 @@
         <resources>
             <resource>
                 <directory>resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
             </resource>
         </resources>
     </build>
