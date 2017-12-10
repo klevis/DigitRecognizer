@@ -14,7 +14,7 @@ public class EdgeDetection {
     private static final double[][] FILTER_VERTICAL = {{1, 0, -1}, {1, 0, -1}, {1, 0, -1}};
     private static final double[][] FILTER_HORIZONTAL = {{1, 1, 1}, {0, 0, 0}, {-1, -1, -1}};
     private static final double[][] FILTER_SOBEL = {{1, 0, -1}, {2, 0, -2}, {1, 0, -1}};
-    private static final String INPUT_IMAGE = "resources/smallGirl.png";
+    private static final String INPUT_IMAGE = "resources/simpleImage.png";
     private static int count = 1;
 
     public static void main(String[] args) throws IOException {
@@ -32,7 +32,7 @@ public class EdgeDetection {
 
         for (int i = 0; i < doubles.length; i++) {
             for (int j = 0; j < doubles[i].length; j++) {
-                System.out.print(doubles[i][j]+" ");
+                System.out.print(doubles[i][j] + " ");
             }
             System.out.println();
         }
@@ -113,10 +113,11 @@ public class EdgeDetection {
     }
 
     private static int fixOutOfRangeRGBValues(double value) {
-        if (value < 0) {
-            return 0;
-        } else if (value > 255) {
-            return 0;
+        if (value < 0.0) {
+            value = -value;
+        }
+        if (value > 255) {
+            return 255;
         } else {
             return (int) value;
         }
