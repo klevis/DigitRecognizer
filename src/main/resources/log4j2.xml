@@ -7,11 +7,15 @@
         <Console name="stdout" target="SYSTEM_OUT">
             <Layout type="PatternLayout" pattern="${pattern}"/>
         </Console>
+        <File name="DigitRecognizer" fileName="DigitRecognizer.log">
+            <Layout type="PatternLayout" pattern="${pattern}"/>
+        </File>
     </Appenders>
 
     <Loggers>
         <Root level="debug">
             <AppenderRef ref="stdout" level="info"/>
+            <AppenderRef ref="DigitRecognizer" level="error"/>
         </Root>
     </Loggers>
 </Configuration>
