@@ -2,6 +2,8 @@ package ramo.klevis.ui;
 
 import com.mortennobel.imagescaling.ResampleFilters;
 import com.mortennobel.imagescaling.ResampleOp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ramo.klevis.data.LabeledImage;
 import ramo.klevis.nn.NeuralNetwork;
 
@@ -16,6 +18,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class UI {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(UI.class);
 
     private static final int FRAME_WIDTH = 1200;
     private static final int FRAME_HEIGHT = 628;

@@ -1,5 +1,7 @@
 package ramo.klevis;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ramo.klevis.ui.ProgressBar;
 import ramo.klevis.ui.UI;
 
@@ -13,12 +15,17 @@ import java.util.Map;
  * Created by klevis.ramo on 11/24/2017.
  */
 public class Run {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(Run.class);
+
     private static JFrame mainFrame = new JFrame();
 
     public static void main(String[] args) throws Exception {
 
+        LOGGER.info("Application is starting ... ");
+
         setHadoopHomeEnvironmentVariable();
-        ProgressBar progressBar = new ProgressBar(mainFrame,true);
+        ProgressBar progressBar = new ProgressBar(mainFrame, true);
         progressBar.showProgressBar("Collecting data this make take several seconds!");
         new Thread(() -> {
             try {
@@ -28,7 +35,6 @@ public class Run {
             } finally {
                 progressBar.setVisible(false);
                 mainFrame.dispose();
-
             }
         }).start();
 
