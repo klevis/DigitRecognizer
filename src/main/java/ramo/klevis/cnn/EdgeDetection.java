@@ -14,7 +14,7 @@ public class EdgeDetection {
     private static final double[][] FILTER_VERTICAL = {{1, 0, -1}, {1, 0, -1}, {1, 0, -1}};
     private static final double[][] FILTER_HORIZONTAL = {{1, 1, 1}, {0, 0, 0}, {-1, -1, -1}};
     private static final double[][] FILTER_SOBEL = {{1, 0, -1}, {2, 0, -2}, {1, 0, -1}};
-    private static final String INPUT_IMAGE = "resources/simpleImage.png";
+    private static final String INPUT_IMAGE = "resources/smallGirl.png";
     private static int count = 1;
 
     public static void main(String[] args) throws IOException {
@@ -73,9 +73,9 @@ public class EdgeDetection {
 
     private static double[][] applyConvolution(int width, int height, double[][][] image, double[][] filter) {
         Convolution convolution = new Convolution();
-        double[][] redConv = convolution.convolutionType1(image[0], height, width, filter, 3, 3, 1);
-        double[][] greenConv = convolution.convolutionType1(image[1], height, width, filter, 3, 3, 1);
-        double[][] blueConv = convolution.convolutionType1(image[2], height, width, filter, 3, 3, 1);
+        double[][] redConv = convolution.convolutionType2(image[0], height, width, filter, 3, 3, 1);
+        double[][] greenConv = convolution.convolutionType2(image[1], height, width, filter, 3, 3, 1);
+        double[][] blueConv = convolution.convolutionType2(image[2], height, width, filter, 3, 3, 1);
         double[][] finalConv = new double[redConv.length][redConv[0].length];
         for (int i = 0; i < redConv.length; i++) {
             for (int j = 0; j < redConv[i].length; j++) {
