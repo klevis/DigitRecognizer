@@ -17,6 +17,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import static ramo.klevis.Run.EXECUTOR_SERVICE;
+
 public class UI {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(UI.class);
@@ -116,18 +118,19 @@ public class UI {
             if (i == JOptionPane.OK_OPTION) {
                 ProgressBar progressBar = new ProgressBar(mainFrame);
                 SwingUtilities.invokeLater(() ->  progressBar.showProgressBar("Training this may take one or two minutes..."));
-                Runnable runnable = () -> {
+                EXECUTOR_SERVICE.submit(() -> {
                     try {
+                        LOGGER.info("Start of train Neural Network");
                         neuralNetwork.train((Integer) trainField.getValue(), (Integer) testField.getValue());
+                        LOGGER.info("End of train Neural Network");
                     } catch (IOException ex) {
+                        LOGGER.error("An error when train Neural Network");
                         throw new RuntimeException(ex);
                     } finally {
                         progressBar.setVisible(false);
                     }
-                };
-                new Thread(runnable).start();
+                });
             }
-
         });
 
         topPanel.add(train);
