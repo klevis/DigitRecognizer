@@ -10,6 +10,8 @@ import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ramo.klevis.data.IdxReader;
 import ramo.klevis.data.LabeledImage;
 
@@ -17,6 +19,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class NeuralNetwork {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(NeuralNetwork.class);
 
     private SparkSession sparkSession;
     private IdxReader idxReader = new IdxReader();
