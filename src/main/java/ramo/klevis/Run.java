@@ -10,6 +10,8 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by klevis.ramo on 11/24/2017.
@@ -17,6 +19,8 @@ import java.util.Map;
 public class Run {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(Run.class);
+
+    public static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
     private static JFrame mainFrame = new JFrame();
 
@@ -27,17 +31,8 @@ public class Run {
         setHadoopHomeEnvironmentVariable();
         ProgressBar progressBar = new ProgressBar(mainFrame, true);
         progressBar.showProgressBar("Collecting data this make take several seconds!");
-        new Thread(() -> {
-            try {
-                new UI().initUI();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                progressBar.setVisible(false);
-                mainFrame.dispose();
-            }
-        }).start();
-
+        UI ui = new UI();
+        EXECUTOR_SERVICE.submit(ui::initUI);
     }
 
 

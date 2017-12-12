@@ -29,7 +29,9 @@ public class NeuralNetwork {
     public void init() {
         initSparkSession();
         if (model == null) {
+            LOGGER.info("Loading the Neural Network from saved model ... ");
             model = MultilayerPerceptronClassificationModel.load("ModelWith60000");
+            LOGGER.info("Loading from saved model is done");
         }
     }
 
@@ -65,7 +67,7 @@ public class NeuralNetwork {
         MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvaluator()
                 .setMetricName("accuracy");
 
-        System.out.println("Test set accuracy = " + evaluator.evaluate(predictionAndLabels));
+        LOGGER.info("Test set accuracy = " + evaluator.evaluate(predictionAndLabels));
     }
 
     private void initSparkSession() {
