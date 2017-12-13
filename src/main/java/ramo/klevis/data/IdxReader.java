@@ -72,7 +72,7 @@ public class IdxReader {
             }
             LOGGER.info("Time to load LabeledImages in seconds: " + ((System.currentTimeMillis() - start) / 1000d));
         } catch (Exception e) {
-            LOGGER.error("Smth went wrong: \n");
+            LOGGER.error("Smth went wrong: \n" + e);
             e.printStackTrace();
         }
 
