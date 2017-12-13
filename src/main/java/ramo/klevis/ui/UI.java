@@ -172,8 +172,8 @@ public class UI {
             }
         });
 
-        topPanel.add(trainNN);
         topPanel.add(trainCNN);
+        topPanel.add(trainNN);
         JLabel tL = new JLabel("Training Data");
         tL.setFont(sansSerifBold);
         topPanel.add(tL);
