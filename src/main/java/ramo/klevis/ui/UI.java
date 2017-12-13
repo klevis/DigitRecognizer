@@ -13,8 +13,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-
-import static ramo.klevis.Run.EXECUTOR_SERVICE;
+import java.util.concurrent.Executors;
 
 public class UI {
 
@@ -22,7 +21,7 @@ public class UI {
 
     private static final int FRAME_WIDTH = 1200;
     private static final int FRAME_HEIGHT = 628;
-    private static final NeuralNetwork NEURAL_NETWORK = new NeuralNetwork();
+    private final NeuralNetwork neuralNetwork = new NeuralNetwork();
 
     private DrawArea drawArea;
     private JFrame mainFrame;
@@ -41,7 +40,7 @@ public class UI {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         UIManager.put("Button.font", new FontUIResource(new Font("Dialog", Font.BOLD, 18)));
         UIManager.put("ProgressBar.font", new FontUIResource(new Font("Dialog", Font.BOLD, 18)));
-        NEURAL_NETWORK.init();
+        neuralNetwork.init();
     }
 
     public void initUI() {
@@ -74,7 +73,7 @@ public class UI {
             BufferedImage scaledBuffered = toBufferedImage(scaled);
             double[] scaledPixels = transformImageToOneDimensionalVector(scaledBuffered);
             LabeledImage labeledImage = new LabeledImage(0, scaledPixels);
-            LabeledImage predict = NEURAL_NETWORK.predict(labeledImage);
+            LabeledImage predict = neuralNetwork.predict(labeledImage);
             JLabel predictNumber = new JLabel("" + (int) predict.getLabel());
             predictNumber.setForeground(Color.RED);
             predictNumber.setFont(new Font("SansSerif", Font.BOLD, 128));
@@ -115,10 +114,10 @@ public class UI {
             if (i == JOptionPane.OK_OPTION) {
                 ProgressBar progressBar = new ProgressBar(mainFrame);
                 SwingUtilities.invokeLater(() ->  progressBar.showProgressBar("Training this may take one or two minutes..."));
-                EXECUTOR_SERVICE.submit(() -> {
+                Executors.newCachedThreadPool().submit(() -> {
                     try {
                         LOGGER.info("Start of train Neural Network");
-                        NEURAL_NETWORK.train((Integer) trainField.getValue(), (Integer) testField.getValue());
+                        neuralNetwork.train((Integer) trainField.getValue(), (Integer) testField.getValue());
                         LOGGER.info("End of train Neural Network");
                     } finally {
                         progressBar.setVisible(false);

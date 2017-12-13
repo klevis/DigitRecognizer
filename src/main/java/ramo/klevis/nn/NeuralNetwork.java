@@ -38,7 +38,6 @@ public class NeuralNetwork {
 
         initSparkSession();
 
-        // TODO: 12/13/2017 try run it on different threads
         List<LabeledImage> labeledImages = IdxReader.loadData(trainData);
         List<LabeledImage> testLabeledImages = IdxReader.loadTestData(testFieldValue);
 

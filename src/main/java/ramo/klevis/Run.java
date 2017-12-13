@@ -19,9 +19,6 @@ import java.util.concurrent.Executors;
 public class Run {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(Run.class);
-
-    public static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
-
     private static JFrame mainFrame = new JFrame();
 
     public static void main(String[] args) throws Exception {
@@ -32,7 +29,7 @@ public class Run {
         ProgressBar progressBar = new ProgressBar(mainFrame, true);
         progressBar.showProgressBar("Collecting data this make take several seconds!");
         UI ui = new UI();
-        EXECUTOR_SERVICE.submit(ui::initUI);
+        Executors.newCachedThreadPool().submit(ui::initUI);
     }
 
 
