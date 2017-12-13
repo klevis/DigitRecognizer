@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ramo.klevis.cnn.ConvolutionalNeuralNetwork;
 import ramo.klevis.data.LabeledImage;
-import ramo.klevis.nn.NeuralNetwork;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -23,7 +22,6 @@ public class UI {
 
     private static final int FRAME_WIDTH = 1200;
     private static final int FRAME_HEIGHT = 628;
-    private final NeuralNetwork neuralNetwork = new NeuralNetwork();
     private final ConvolutionalNeuralNetwork convolutionalNeuralNetwork = new ConvolutionalNeuralNetwork();
 
     private DrawArea drawArea;
@@ -43,7 +41,6 @@ public class UI {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         UIManager.put("Button.font", new FontUIResource(new Font("Dialog", Font.BOLD, 18)));
         UIManager.put("ProgressBar.font", new FontUIResource(new Font("Dialog", Font.BOLD, 18)));
-        neuralNetwork.init();
         convolutionalNeuralNetwork.init();
     }
 
@@ -69,25 +66,7 @@ public class UI {
     }
 
     private void addActionPanel() {
-        JButton recognize = new JButton("Recognize Digit With Simple NN");
         JButton recognizeCNN = new JButton("Recognize Digit With Conv NN");
-        recognize.addActionListener(e -> {
-            Image drawImage = drawArea.getImage();
-            BufferedImage sbi = toBufferedImage(drawImage);
-            Image scaled = scale(sbi);
-            BufferedImage scaledBuffered = toBufferedImage(scaled);
-            double[] scaledPixels = transformImageToOneDimensionalVector(scaledBuffered);
-            LabeledImage labeledImage = new LabeledImage(0, scaledPixels);
-            LabeledImage predict = neuralNetwork.predict(labeledImage);
-            JLabel predictNumber = new JLabel("" + (int) predict.getLabel());
-            predictNumber.setForeground(Color.RED);
-            predictNumber.setFont(new Font("SansSerif", Font.BOLD, 128));
-            resultPanel.removeAll();
-            resultPanel.add(predictNumber);
-            resultPanel.updateUI();
-
-        });
-
         recognizeCNN.addActionListener(e -> {
             Image drawImage = drawArea.getImage();
             BufferedImage sbi = toBufferedImage(drawImage);
@@ -112,7 +91,6 @@ public class UI {
         });
         JPanel actionPanel = new JPanel(new GridLayout(8, 1));
         actionPanel.add(recognizeCNN);
-        actionPanel.add(recognize);
         actionPanel.add(clear);
         drawAndDigitPredictionPanel.add(actionPanel);
     }
@@ -129,26 +107,6 @@ public class UI {
 
     private void addTopPanel() {
         JPanel topPanel = new JPanel(new FlowLayout());
-        JButton trainNN = new JButton("Train NN");
-        trainNN.addActionListener(e -> {
-
-            int i = JOptionPane.showConfirmDialog(mainFrame, "Are you sure this may take some time to train?");
-
-            if (i == JOptionPane.OK_OPTION) {
-                ProgressBar progressBar = new ProgressBar(mainFrame);
-                SwingUtilities.invokeLater(() -> progressBar.showProgressBar("Training may take one or two minutes..."));
-                Executors.newCachedThreadPool().submit(() -> {
-                    try {
-                        LOGGER.info("Start of train Neural Network");
-                        neuralNetwork.train((Integer) trainField.getValue(), (Integer) testField.getValue());
-                        LOGGER.info("End of train Neural Network");
-                    } finally {
-                        progressBar.setVisible(false);
-                    }
-                });
-            }
-        });
-
         JButton trainCNN = new JButton("Train Convolutional NN");
         trainCNN.addActionListener(e -> {
 
@@ -173,7 +131,6 @@ public class UI {
         });
 
         topPanel.add(trainCNN);
-        topPanel.add(trainNN);
         JLabel tL = new JLabel("Training Data");
         tL.setFont(sansSerifBold);
         topPanel.add(tL);
