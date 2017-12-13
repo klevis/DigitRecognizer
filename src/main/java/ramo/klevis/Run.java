@@ -29,7 +29,14 @@ public class Run {
         ProgressBar progressBar = new ProgressBar(mainFrame, true);
         progressBar.showProgressBar("Collecting data this make take several seconds!");
         UI ui = new UI();
-        Executors.newCachedThreadPool().submit(ui::initUI);
+        Executors.newCachedThreadPool().submit(()->{
+            try {
+                ui.initUI();
+            } finally {
+                progressBar.setVisible(false);
+                mainFrame.dispose();
+            }
+        });
     }
 
 

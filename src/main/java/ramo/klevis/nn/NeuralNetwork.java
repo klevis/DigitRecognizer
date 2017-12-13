@@ -29,7 +29,7 @@ public class NeuralNetwork {
         initSparkSession();
         if (model == null) {
             LOGGER.info("Loading the Neural Network from saved model ... ");
-            model = MultilayerPerceptronClassificationModel.load("ModelWith60000");
+            model = MultilayerPerceptronClassificationModel.load("resources/nnTrainedModels/ModelWith60000");
             LOGGER.info("Loading from saved model is done");
         }
     }

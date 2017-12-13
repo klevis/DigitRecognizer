@@ -35,8 +35,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class ConvolutionalNeuralNetwork {
 
-    private static final String OUT_DIR = "/resources/cnnCurrentTrainingModels";
-    private static final String TRAINED_MODEL_FILE = "/resources/cnnTrainedModels";
+    private static final String OUT_DIR = "resources/cnnCurrentTrainingModels";
+    private static final String TRAINED_MODEL_FILE = "resources/cnnTrainedModels/bestModel.bin";
 
     private static final Logger LOG = LoggerFactory.getLogger(ConvolutionalNeuralNetwork.class);
     private MultiLayerNetwork preTrainedModel;
@@ -51,15 +51,11 @@ public class ConvolutionalNeuralNetwork {
             pixels[i] = pixels[i] / 255d;
         }
         int[] predict = preTrainedModel.predict(Nd4j.create(pixels));
-        for (int i = 0; i < predict.length; i++) {
-            if (predict[i] != 0) {
-                return i;
-            }
-        }
-        return -1;
+
+        return predict[0];
     }
 
-    public void train(int trainDataSize, int testDataSize) throws IOException {
+    public void train(Integer trainDataSize, Integer testDataSize) throws IOException {
         int nChannels = 1; // Number of input channels
         int outputNum = 10; // The number of possible outcomes
         int batchSize = 64; // Test batch size

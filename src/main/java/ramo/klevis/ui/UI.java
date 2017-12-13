@@ -4,6 +4,7 @@ import com.mortennobel.imagescaling.ResampleFilters;
 import com.mortennobel.imagescaling.ResampleOp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ramo.klevis.cnn.ConvolutionalNeuralNetwork;
 import ramo.klevis.data.LabeledImage;
 import ramo.klevis.nn.NeuralNetwork;
 
@@ -13,6 +14,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.concurrent.Executors;
 
 public class UI {
@@ -22,6 +24,7 @@ public class UI {
     private static final int FRAME_WIDTH = 1200;
     private static final int FRAME_HEIGHT = 628;
     private final NeuralNetwork neuralNetwork = new NeuralNetwork();
+    private final ConvolutionalNeuralNetwork convolutionalNeuralNetwork = new ConvolutionalNeuralNetwork();
 
     private DrawArea drawArea;
     private JFrame mainFrame;
@@ -41,6 +44,7 @@ public class UI {
         UIManager.put("Button.font", new FontUIResource(new Font("Dialog", Font.BOLD, 18)));
         UIManager.put("ProgressBar.font", new FontUIResource(new Font("Dialog", Font.BOLD, 18)));
         neuralNetwork.init();
+        convolutionalNeuralNetwork.init();
     }
 
     public void initUI() {
@@ -59,13 +63,14 @@ public class UI {
 
         addSignature();
 
-        mainFrame.add(mainPanel,BorderLayout.CENTER);
+        mainFrame.add(mainPanel, BorderLayout.CENTER);
         mainFrame.setVisible(true);
 
     }
 
     private void addActionPanel() {
-        JButton recognize = new JButton("Recognize Digit");
+        JButton recognize = new JButton("Recognize Digit With Simple NN");
+        JButton recognizeCNN = new JButton("Recognize Digit With Conv NN");
         recognize.addActionListener(e -> {
             Image drawImage = drawArea.getImage();
             BufferedImage sbi = toBufferedImage(drawImage);
@@ -82,6 +87,23 @@ public class UI {
             resultPanel.updateUI();
 
         });
+
+        recognizeCNN.addActionListener(e -> {
+            Image drawImage = drawArea.getImage();
+            BufferedImage sbi = toBufferedImage(drawImage);
+            Image scaled = scale(sbi);
+            BufferedImage scaledBuffered = toBufferedImage(scaled);
+            double[] scaledPixels = transformImageToOneDimensionalVector(scaledBuffered);
+            LabeledImage labeledImage = new LabeledImage(0, scaledPixels);
+            int predict = convolutionalNeuralNetwork.predict(labeledImage);
+            JLabel predictNumber = new JLabel("" + predict);
+            predictNumber.setForeground(Color.RED);
+            predictNumber.setFont(new Font("SansSerif", Font.BOLD, 128));
+            resultPanel.removeAll();
+            resultPanel.add(predictNumber);
+            resultPanel.updateUI();
+
+        });
         JButton clear = new JButton("Clear");
         clear.addActionListener(e -> {
             drawArea.setImage(null);
@@ -89,6 +111,7 @@ public class UI {
             drawAndDigitPredictionPanel.updateUI();
         });
         JPanel actionPanel = new JPanel(new GridLayout(8, 1));
+        actionPanel.add(recognizeCNN);
         actionPanel.add(recognize);
         actionPanel.add(clear);
         drawAndDigitPredictionPanel.add(actionPanel);
@@ -106,14 +129,14 @@ public class UI {
 
     private void addTopPanel() {
         JPanel topPanel = new JPanel(new FlowLayout());
-        JButton train = new JButton("Train NN");
-        train.addActionListener(e -> {
+        JButton trainNN = new JButton("Train NN");
+        trainNN.addActionListener(e -> {
 
             int i = JOptionPane.showConfirmDialog(mainFrame, "Are you sure this may take some time to train?");
 
             if (i == JOptionPane.OK_OPTION) {
                 ProgressBar progressBar = new ProgressBar(mainFrame);
-                SwingUtilities.invokeLater(() ->  progressBar.showProgressBar("Training this may take one or two minutes..."));
+                SwingUtilities.invokeLater(() -> progressBar.showProgressBar("Training may take one or two minutes..."));
                 Executors.newCachedThreadPool().submit(() -> {
                     try {
                         LOGGER.info("Start of train Neural Network");
@@ -126,7 +149,31 @@ public class UI {
             }
         });
 
-        topPanel.add(train);
+        JButton trainCNN = new JButton("Train Convolutional NN");
+        trainCNN.addActionListener(e -> {
+
+            int i = JOptionPane.showConfirmDialog(mainFrame, "Are you sure, training requires >10GB memory and more than 1 hour?");
+
+            if (i == JOptionPane.OK_OPTION) {
+                ProgressBar progressBar = new ProgressBar(mainFrame);
+                SwingUtilities.invokeLater(() -> progressBar.showProgressBar("Training may take a while..."));
+                Executors.newCachedThreadPool().submit(() -> {
+                    try {
+                        LOGGER.info("Start of train Convolutional Neural Network");
+                        convolutionalNeuralNetwork.train((Integer) trainField.getValue(), (Integer) testField.getValue());
+                        LOGGER.info("End of train Convolutional Neural Network");
+                    } catch (IOException e1) {
+                        LOGGER.error("CNN not trained " + e1);
+                        throw new RuntimeException(e1);
+                    } finally {
+                        progressBar.setVisible(false);
+                    }
+                });
+            }
+        });
+
+        topPanel.add(trainNN);
+        topPanel.add(trainCNN);
         JLabel tL = new JLabel("Training Data");
         tL.setFont(sansSerifBold);
         topPanel.add(tL);
