@@ -7,15 +7,12 @@ import org.slf4j.LoggerFactory;
 import ramo.klevis.data.LabeledImage;
 import ramo.klevis.nn.NeuralNetwork;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 import static ramo.klevis.Run.EXECUTOR_SERVICE;
 
@@ -25,7 +22,7 @@ public class UI {
 
     private static final int FRAME_WIDTH = 1200;
     private static final int FRAME_HEIGHT = 628;
-    private final NeuralNetwork neuralNetwork = new NeuralNetwork();
+    private static final NeuralNetwork NEURAL_NETWORK = new NeuralNetwork();
 
     private DrawArea drawArea;
     private JFrame mainFrame;
@@ -44,7 +41,7 @@ public class UI {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         UIManager.put("Button.font", new FontUIResource(new Font("Dialog", Font.BOLD, 18)));
         UIManager.put("ProgressBar.font", new FontUIResource(new Font("Dialog", Font.BOLD, 18)));
-        neuralNetwork.init();
+        NEURAL_NETWORK.init();
     }
 
     public void initUI() {
@@ -77,7 +74,7 @@ public class UI {
             BufferedImage scaledBuffered = toBufferedImage(scaled);
             double[] scaledPixels = transformImageToOneDimensionalVector(scaledBuffered);
             LabeledImage labeledImage = new LabeledImage(0, scaledPixels);
-            LabeledImage predict = neuralNetwork.predict(labeledImage);
+            LabeledImage predict = NEURAL_NETWORK.predict(labeledImage);
             JLabel predictNumber = new JLabel("" + (int) predict.getLabel());
             predictNumber.setForeground(Color.RED);
             predictNumber.setFont(new Font("SansSerif", Font.BOLD, 128));
@@ -121,7 +118,7 @@ public class UI {
                 EXECUTOR_SERVICE.submit(() -> {
                     try {
                         LOGGER.info("Start of train Neural Network");
-                        neuralNetwork.train((Integer) trainField.getValue(), (Integer) testField.getValue());
+                        NEURAL_NETWORK.train((Integer) trainField.getValue(), (Integer) testField.getValue());
                         LOGGER.info("End of train Neural Network");
                     } finally {
                         progressBar.setVisible(false);
