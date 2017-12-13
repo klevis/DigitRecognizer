@@ -23,7 +23,6 @@ public class NeuralNetwork {
     private final static Logger LOGGER = LoggerFactory.getLogger(NeuralNetwork.class);
 
     private SparkSession sparkSession;
-    private IdxReader idxReader = new IdxReader();
     private MultilayerPerceptronClassificationModel model;
 
     public void init() {
@@ -35,19 +34,18 @@ public class NeuralNetwork {
         }
     }
 
-    public void train(Integer trainData, Integer testFieldValue) throws IOException {
+    public void train(Integer trainData, Integer testFieldValue) {
 
         initSparkSession();
 
+        // TODO: 12/13/2017 try run it on different threads
+        List<LabeledImage> labeledImages = IdxReader.loadData(trainData);
+        List<LabeledImage> testLabeledImages = IdxReader.loadTestData(testFieldValue);
 
-        List<LabeledImage> labeledImages = idxReader.loadData(trainData);
-        List<LabeledImage> testLabeledImages = idxReader.loadTestData(testFieldValue);
         Dataset<Row> train = sparkSession.createDataFrame(labeledImages, LabeledImage.class).checkpoint();
         Dataset<Row> test = sparkSession.createDataFrame(testLabeledImages, LabeledImage.class).checkpoint();
 
-
         int[] layers = new int[]{784, 128, 64, 10};
-
 
         MultilayerPerceptronClassifier trainer = new MultilayerPerceptronClassifier()
                 .setLayers(layers)

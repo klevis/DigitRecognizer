@@ -123,9 +123,6 @@ public class UI {
                         LOGGER.info("Start of train Neural Network");
                         neuralNetwork.train((Integer) trainField.getValue(), (Integer) testField.getValue());
                         LOGGER.info("End of train Neural Network");
-                    } catch (IOException ex) {
-                        LOGGER.error("An error when train Neural Network");
-                        throw new RuntimeException(ex);
                     } finally {
                         progressBar.setVisible(false);
                     }
