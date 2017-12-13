@@ -104,7 +104,7 @@ public class ConvolutionalNeuralNetwork {
                         .nOut(outputNum)
                         .activation(Activation.SOFTMAX)
                         .build())
-                .setInputType(InputType.convolutionalFlat(28, 28, 1)) //See note below
+                .setInputType(InputType.convolutionalFlat(28, 28, 1))
                 .backprop(true).pretrain(false).build();
 
         EarlyStoppingConfiguration esConf = new EarlyStoppingConfiguration.Builder()
