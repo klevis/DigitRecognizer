@@ -18,24 +18,6 @@ public class EdgeDetection {
     private static int count = 1;
 
     public static void main(String[] args) throws IOException {
-
-        double[][] doubles = new Convolution().convolutionType1(new double[][]{
-                        {255, 255, 255, 255, 255, 255},
-                        {255, 255, 255, 255, 255, 255},
-                        {255, 255, 255, 255, 255, 255},
-                        {255, 255, 255, 255, 255, 255},
-                        {10, 10, 10, 10, 10, 10},
-                        {10, 10, 10, 10, 10, 10},
-                        {10, 10, 10, 10, 10, 10},
-                        {10, 10, 10, 10, 10, 10}},
-                8, 6, FILTER_HORIZONTAL, 3, 3, 1);
-
-        for (int i = 0; i < doubles.length; i++) {
-            for (int j = 0; j < doubles[i].length; j++) {
-                System.out.print(doubles[i][j] + " ");
-            }
-            System.out.println();
-        }
         detectVerticalEdges();
         detectHorizontalEdges();
         detectSobelEdges();

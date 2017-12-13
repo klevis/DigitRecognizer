@@ -16,26 +16,50 @@ import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ramo.klevis.data.IdxReader;
+import ramo.klevis.data.LabeledImage;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by agibsonccc on 9/16/15.
  */
 public class ConvolutionalNeuralNetwork {
-    private static final Logger log = LoggerFactory.getLogger(ConvolutionalNeuralNetwork.class);
-    private static final String in = "C:\\Users\\klevis.ramo\\Desktop\\blog\\MyNNConv128_4.zip";
-    private static final String ouput = "C:\\Users\\klevis.ramo\\Desktop\\blog\\MyNNConv128_6.zip";
-    private static final String dir = "C:\\Users\\klevis.ramo\\Desktop\\blog\\res128_64";
-    private static IdxReader idxReader = new IdxReader();
 
-    public static void main(String[] args) throws Exception {
+    private static final String OUT_DIR = "/resources/cnnCurrentTrainingModels";
+    private static final String TRAINED_MODEL_FILE = "/resources/cnnTrainedModels";
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConvolutionalNeuralNetwork.class);
+    private MultiLayerNetwork preTrainedModel;
+
+    public void init() throws IOException {
+        preTrainedModel = ModelSerializer.restoreMultiLayerNetwork(new File(TRAINED_MODEL_FILE));
+    }
+
+    public int predict(LabeledImage labeledImage) {
+        double[] pixels = labeledImage.getPixels();
+        for (int i = 0; i < pixels.length; i++) {
+            pixels[i] = pixels[i] / 255d;
+        }
+        int[] predict = preTrainedModel.predict(Nd4j.create(pixels));
+        for (int i = 0; i < predict.length; i++) {
+            if (predict[i] != 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void train(int trainDataSize, int testDataSize) throws IOException {
         int nChannels = 1; // Number of input channels
         int outputNum = 10; // The number of possible outcomes
         int batchSize = 64; // Test batch size
@@ -43,7 +67,7 @@ public class ConvolutionalNeuralNetwork {
         int iterations = 1; // Number of training iterations
         int seed = 123; //
 
-        MnistDataSetIterator mnistTrain = new MnistDataSetIterator(batchSize, true, 12345);
+        MnistDataSetIterator mnistTrain = new MnistDataSetIterator(batchSize, trainDataSize, false, true, true, 12345);
 
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
                 .seed(seed)
@@ -89,20 +113,24 @@ public class ConvolutionalNeuralNetwork {
         EarlyStoppingConfiguration esConf = new EarlyStoppingConfiguration.Builder()
                 .epochTerminationConditions(new MaxEpochsTerminationCondition(nEpochs))
                 .iterationTerminationConditions(new MaxTimeIterationTerminationCondition(75, TimeUnit.MINUTES))
-                .scoreCalculator(new AccuracyCalculator(new MnistDataSetIterator(10000, false, 12345)))
+                .scoreCalculator(new AccuracyCalculator(
+                        new MnistDataSetIterator(testDataSize, testDataSize, false, false, true, 12345)))
                 .evaluateEveryNEpochs(1)
-                .modelSaver(new LocalFileModelSaver(dir))
+                .modelSaver(new LocalFileModelSaver(OUT_DIR))
                 .build();
 
         EarlyStoppingTrainer trainer = new EarlyStoppingTrainer(esConf, conf, mnistTrain);
 
         EarlyStoppingResult result = trainer.fit();
 
-        System.out.println("Termination reason: " + result.getTerminationReason());
-        System.out.println("Termination details: " + result.getTerminationDetails());
-        System.out.println("Total epochs: " + result.getTotalEpochs());
-        System.out.println("Best epoch number: " + result.getBestModelEpoch());
-        System.out.println("Score at best epoch: " + result.getBestModelScore());
+        LOG.info("Termination reason: " + result.getTerminationReason());
+        LOG.info("Termination details: " + result.getTerminationDetails());
+        LOG.info("Total epochs: " + result.getTotalEpochs());
+        LOG.info("Best epoch number: " + result.getBestModelEpoch());
+        LOG.info("Score at best epoch: " + result.getBestModelScore());
+    }
 
+    public static void main(String[] args) throws Exception {
+        new ConvolutionalNeuralNetwork().train(60000, 1000);
     }
 }

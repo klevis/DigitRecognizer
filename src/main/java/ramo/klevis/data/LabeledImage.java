@@ -2,7 +2,6 @@ package ramo.klevis.data;
 
 import org.apache.spark.ml.linalg.Vector;
 import org.apache.spark.ml.linalg.Vectors;
-import org.apache.spark.mllib.feature.Normalizer;
 
 import java.io.Serializable;
 
@@ -10,23 +9,23 @@ import java.io.Serializable;
  * Created by klevis.ramo on 11/27/2017.
  */
 public class LabeledImage implements Serializable {
+    private final double[] meanNormalizedPixel;
+    private final double[] pixels;
     private double label;
     private Vector features;
-    private final double[] pixelsNorm;
-
-    public double[] getPixelsNorm() {
-        return pixelsNorm;
-    }
 
     public LabeledImage(int label, double[] pixels) {
+        meanNormalizedPixel = meanNormalizeFeatures(pixels);
+        this.pixels = pixels;
+        features = Vectors.dense(meanNormalizedPixel);
         this.label = label;
-//        Normalizer normalizer = new Normalizer();
-//        org.apache.spark.mllib.linalg.Vector transform = normalizer.transform(org.apache.spark.mllib.linalg.Vectors.dense(pixels));
-        pixelsNorm = normalizeFeatures(pixels);
-        features = Vectors.dense(pixelsNorm);
     }
 
-    private double[] normalizeFeatures(double[] pixels) {
+    public double[] getPixels() {
+        return pixels;
+    }
+
+    private double[] meanNormalizeFeatures(double[] pixels) {
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
         double sum = 0;
