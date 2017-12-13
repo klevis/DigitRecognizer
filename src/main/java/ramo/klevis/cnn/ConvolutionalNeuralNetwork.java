@@ -75,7 +75,6 @@ public class ConvolutionalNeuralNetwork {
                 .updater(Updater.NESTEROVS)
                 .list()
                 .layer(0, new ConvolutionLayer.Builder(5, 5)
-                        //nIn and nOut specify depth. nIn here is the nChannels and nOut is the number of filters to be applied
                         .nIn(nChannels)
                         .stride(1, 1)
                         .nOut(20)
@@ -86,7 +85,7 @@ public class ConvolutionalNeuralNetwork {
                         .stride(2, 2)
                         .build())
                 .layer(2, new ConvolutionLayer.Builder(5, 5)
-                        //Note that nIn need not be specified in later layers
+                        .nIn(20)
                         .stride(1, 1)
                         .nOut(50)
                         .activation(Activation.IDENTITY)
@@ -96,8 +95,10 @@ public class ConvolutionalNeuralNetwork {
                         .stride(2, 2)
                         .build())
                 .layer(4, new DenseLayer.Builder().activation(Activation.RELU)
+                        .nIn(800)
                         .nOut(128).build())
                 .layer(5, new DenseLayer.Builder().activation(Activation.RELU)
+                        .nIn(128)
                         .nOut(64).build())
                 .layer(6, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .nOut(outputNum)
