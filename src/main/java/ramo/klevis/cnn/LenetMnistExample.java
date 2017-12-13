@@ -15,14 +15,14 @@ import org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.linalg.activations.Activation;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,12 +31,12 @@ import java.util.Map;
  */
 public class LenetMnistExample {
     private static final Logger log = LoggerFactory.getLogger(LenetMnistExample.class);
-
+    private static final String ouput = "C:\\Users\\klevis.ramo\\Desktop\\blog\\LeNet500_1.zip";
     public static void main(String[] args) throws Exception {
         int nChannels = 1; // Number of input channels
         int outputNum = 10; // The number of possible outcomes
         int batchSize = 64; // Test batch size
-        int nEpochs = 1; // Number of training epochs
+        int nEpochs = 100; // Number of training epochs
         int iterations = 1; // Number of training iterations
         int seed = 123; //
 
@@ -44,8 +44,7 @@ public class LenetMnistExample {
             Create an iterator using the batch size for one iteration
          */
         log.info("Load data....");
-        DataSetIterator mnistTrain = new MnistDataSetIterator(batchSize,true,12345);
-        DataSetIterator mnistTest = new MnistDataSetIterator(batchSize,false,12345);
+        DataSetIterator mnistTrain = new MnistDataSetIterator(batchSize, true, 12345);
 
         /*
             Construct the neural network
@@ -92,8 +91,8 @@ public class LenetMnistExample {
                         .activation(Activation.IDENTITY)
                         .build())
                 .layer(1, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
-                        .kernelSize(2,2)
-                        .stride(2,2)
+                        .kernelSize(2, 2)
+                        .stride(2, 2)
                         .build())
                 .layer(2, new ConvolutionLayer.Builder(5, 5)
                         //Note that nIn need not be specified in later layers
@@ -102,8 +101,8 @@ public class LenetMnistExample {
                         .activation(Activation.IDENTITY)
                         .build())
                 .layer(3, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
-                        .kernelSize(2,2)
-                        .stride(2,2)
+                        .kernelSize(2, 2)
+                        .stride(2, 2)
                         .build())
                 .layer(4, new DenseLayer.Builder().activation(Activation.RELU)
                         .nOut(500).build())
@@ -111,7 +110,7 @@ public class LenetMnistExample {
                         .nOut(outputNum)
                         .activation(Activation.SOFTMAX)
                         .build())
-                .setInputType(InputType.convolutionalFlat(28,28,1)) //See note below
+                .setInputType(InputType.convolutionalFlat(28, 28, 1)) //See note below
                 .backprop(true).pretrain(false).build();
 
         /*
@@ -133,15 +132,27 @@ public class LenetMnistExample {
 
         log.info("Train model....");
         model.setListeners(new ScoreIterationListener(1));
-        for( int i=0; i<nEpochs; i++ ) {
+        DataSetIterator mnistTest = null;
+        for (int i = 0; i < nEpochs; i++) {
             model.fit(mnistTrain);
             log.info("*** Completed epoch {} ***", i);
-
+            if (mnistTest == null) {
+                mnistTest = new MnistDataSetIterator(10000, false, 12345);
+            }
             log.info("Evaluate model....");
             Evaluation eval = model.evaluate(mnistTest);
+            if (eval.accuracy() >= 0.9901) {
+                File locationToSave = new File(ouput);      //Where to save the network. Note: the file is in .zip format - can be opened externally
+                boolean saveUpdater = true;                                             //Updater: i.e., the state for Momentum, RMSProp, Adagrad etc. Save this if you want to train your network more in the future
+                ModelSerializer.writeModel(model, locationToSave, saveUpdater);
+                log.info("found ");
+                break;
+            }
             log.info(eval.stats());
             mnistTest.reset();
         }
+
+
         log.info("****************Example finished********************");
     }
 }

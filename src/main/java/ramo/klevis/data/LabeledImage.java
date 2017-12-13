@@ -12,12 +12,17 @@ import java.io.Serializable;
 public class LabeledImage implements Serializable {
     private double label;
     private Vector features;
+    private final double[] pixelsNorm;
+
+    public double[] getPixelsNorm() {
+        return pixelsNorm;
+    }
 
     public LabeledImage(int label, double[] pixels) {
         this.label = label;
 //        Normalizer normalizer = new Normalizer();
 //        org.apache.spark.mllib.linalg.Vector transform = normalizer.transform(org.apache.spark.mllib.linalg.Vectors.dense(pixels));
-        double[] pixelsNorm = normalizeFeatures(pixels);
+        pixelsNorm = normalizeFeatures(pixels);
         features = Vectors.dense(pixelsNorm);
     }
 

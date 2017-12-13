@@ -1,7 +1,12 @@
 package ramo.klevis.cnn;
 
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
-import org.deeplearning4j.eval.Evaluation;
+import org.deeplearning4j.earlystopping.EarlyStoppingConfiguration;
+import org.deeplearning4j.earlystopping.EarlyStoppingResult;
+import org.deeplearning4j.earlystopping.saver.LocalFileModelSaver;
+import org.deeplearning4j.earlystopping.termination.MaxEpochsTerminationCondition;
+import org.deeplearning4j.earlystopping.termination.MaxTimeIterationTerminationCondition;
+import org.deeplearning4j.earlystopping.trainer.EarlyStoppingTrainer;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -11,117 +16,93 @@ import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
-import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
-import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
-import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.linalg.activations.Activation;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.dataset.api.DataSet;
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ramo.klevis.data.IdxReader;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Created by klevis.ramo on 12/10/2017.
+ * Created by agibsonccc on 9/16/15.
  */
 public class ConvolutionalNeuralNetwork {
+    private static final Logger log = LoggerFactory.getLogger(ConvolutionalNeuralNetwork.class);
+    private static final String in = "C:\\Users\\klevis.ramo\\Desktop\\blog\\MyNNConv128_4.zip";
+    private static final String ouput = "C:\\Users\\klevis.ramo\\Desktop\\blog\\MyNNConv128_6.zip";
+    private static final String dir = "C:\\Users\\klevis.ramo\\Desktop\\blog\\res128_64";
+    private static IdxReader idxReader = new IdxReader();
 
-    private static Logger log = LoggerFactory.getLogger(ConvolutionalNeuralNetwork.class);
+    public static void main(String[] args) throws Exception {
+        int nChannels = 1; // Number of input channels
+        int outputNum = 10; // The number of possible outcomes
+        int batchSize = 64; // Test batch size
+        int nEpochs = 20; // Number of training epochs
+        int iterations = 1; // Number of training iterations
+        int seed = 123; //
 
-    public void train(Integer trainData, Integer testFieldValue) throws IOException {
+        MnistDataSetIterator mnistTrain = new MnistDataSetIterator(batchSize, true, 12345);
 
-        //number of rows and columns in the input pictures
-        final int numRows = 28;
-        final int numColumns = 28;
-        int outputNum = 10; // number of output classes
-        int batchSize = 1000; // batch size for each epoch
-        int rngSeed = 123; // random number seed for reproducibility
-        int numEpochs = 15; // number of epochs to perform
-
-        //Get the DataSetIterators:
-        DataSetIterator mnistTrain = new MnistDataSetIterator(batchSize, true, rngSeed);
-        DataSetIterator mnistTest = new MnistDataSetIterator(batchSize, false, rngSeed);
-
-
-        log.info("Build model....");
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-                .seed(rngSeed) //include a random seed for reproducibility
-                // use stochastic gradient descent as an optimization algorithm
+                .seed(seed)
+                .iterations(iterations)
+                .regularization(false)
+                .learningRate(0.01)
+                .weightInit(WeightInit.XAVIER)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .iterations(1)
-                .learningRate(0.006) //specify the learning rate
                 .updater(Updater.NESTEROVS)
-                .regularization(true).l2(1e-4)
                 .list()
-                .layer(0, convInit("cnn1", 1, 16, new int[]{5, 5}, new int[]{1, 1}, new int[]{0, 0}, 0))
-                .layer(1, new SubsamplingLayer.Builder(2, 2)
+                .layer(0, new ConvolutionLayer.Builder(5, 5)
+                        //nIn and nOut specify depth. nIn here is the nChannels and nOut is the number of filters to be applied
+                        .nIn(nChannels)
+                        .stride(1, 1)
+                        .nOut(20)
+                        .activation(Activation.IDENTITY)
                         .build())
-                .layer(2, conv3x3("cnn3", 32, 0))
-                .layer(3, new SubsamplingLayer.Builder(2, 2).build())
-                .layer(4, new DenseLayer.Builder()
-                        .nOut(128)
-                        .activation(Activation.RELU)
-                        .weightInit(WeightInit.XAVIER)
+                .layer(1, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
+                        .kernelSize(2, 2)
+                        .stride(2, 2)
                         .build())
-                .layer(5, new DenseLayer.Builder()
-                        .nOut(64)
-                        .activation(Activation.RELU)
-                        .weightInit(WeightInit.XAVIER)
+                .layer(2, new ConvolutionLayer.Builder(5, 5)
+                        //Note that nIn need not be specified in later layers
+                        .stride(1, 1)
+                        .nOut(50)
+                        .activation(Activation.IDENTITY)
                         .build())
-                .layer(6, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD) //create hidden layer
+                .layer(3, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
+                        .kernelSize(2, 2)
+                        .stride(2, 2)
+                        .build())
+                .layer(4, new DenseLayer.Builder().activation(Activation.RELU)
+                        .nOut(128).build())
+                .layer(5, new DenseLayer.Builder().activation(Activation.RELU)
+                        .nOut(64).build())
+                .layer(6, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .nOut(outputNum)
                         .activation(Activation.SOFTMAX)
-                        .weightInit(WeightInit.XAVIER)
                         .build())
-                .setInputType(InputType.convolutionalFlat(28, 28, 1))
-                .pretrain(false).backprop(true) //use backpropagation to adjust weights
+                .setInputType(InputType.convolutionalFlat(28, 28, 1)) //See note below
+                .backprop(true).pretrain(false).build();
+
+        EarlyStoppingConfiguration esConf = new EarlyStoppingConfiguration.Builder()
+                .epochTerminationConditions(new MaxEpochsTerminationCondition(nEpochs))
+                .iterationTerminationConditions(new MaxTimeIterationTerminationCondition(75, TimeUnit.MINUTES))
+                .scoreCalculator(new AccuracyCalculator(new MnistDataSetIterator(10000, false, 12345)))
+                .evaluateEveryNEpochs(1)
+                .modelSaver(new LocalFileModelSaver(dir))
                 .build();
 
-        MultiLayerNetwork model = new MultiLayerNetwork(conf);
-        model.init();
-        //print the score with every 1 iteration
-        model.setListeners(new ScoreIterationListener(1));
+        EarlyStoppingTrainer trainer = new EarlyStoppingTrainer(esConf, conf, mnistTrain);
 
-        log.info("Train model....");
-        for (int i = 0; i < numEpochs; i++) {
-            model.fit(mnistTrain);
-        }
+        EarlyStoppingResult result = trainer.fit();
 
+        System.out.println("Termination reason: " + result.getTerminationReason());
+        System.out.println("Termination details: " + result.getTerminationDetails());
+        System.out.println("Total epochs: " + result.getTotalEpochs());
+        System.out.println("Best epoch number: " + result.getBestModelEpoch());
+        System.out.println("Score at best epoch: " + result.getBestModelScore());
 
-        log.info("Evaluate model....");
-        Evaluation eval = new Evaluation(outputNum); //create an evaluation object with 10 possible classes
-        while (mnistTest.hasNext()) {
-            DataSet next = mnistTest.next();
-            INDArray output = model.output(next.getFeatureMatrix()); //get the networks prediction
-            eval.eval(next.getLabels(), output); //check the prediction against the true class
-        }
-
-        System.out.println(eval.stats());
-        log.info(eval.stats());
-        log.info("****************Example finished********************");
-
-        File locationToSave = new File("C:\\Users\\klevis.ramo\\Desktop\\blog\\MyMultiLayerNetwork.zip");      //Where to save the network. Note: the file is in .zip format - can be opened externally
-        boolean saveUpdater = true;                                             //Updater: i.e., the state for Momentum, RMSProp, Adagrad etc. Save this if you want to train your network more in the future
-        ModelSerializer.writeModel(model, locationToSave, saveUpdater);
-
-    }
-
-    private ConvolutionLayer conv3x3(String name, int out, double bias) {
-        return new ConvolutionLayer.Builder(3, 3)
-                .name(name).nOut(out).biasInit(bias).build();
-    }
-
-    private ConvolutionLayer convInit(String name, int in, int out, int[] kernel, int[] stride, int[] pad, double bias) {
-        return new ConvolutionLayer.Builder(kernel, stride, pad).name(name).nIn(in).nOut(out).biasInit(bias).build();
-    }
-
-    public static void main(String[] args) throws IOException {
-        new ConvolutionalNeuralNetwork().train(null, null);
     }
 }
-

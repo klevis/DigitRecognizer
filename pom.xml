@@ -130,6 +130,18 @@
             <version>0.9.1</version>
         </dependency>
 
+<!--        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-cuda-7.5</artifactId>
+            <version>0.9.1</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-zoo</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
     </dependencies>
     <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core_2.10 -->
 
