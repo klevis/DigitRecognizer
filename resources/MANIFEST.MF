@@ -1,0 +1,110 @@
+Manifest-Version: 1.0
+Class-Path: javax.annotation-api-1.2.jar minlog-1.3.0.jar breeze_2.11-
+ 0.13.1.jar slf4j-ext-1.7.25.jar commons-lang-2.6.jar macro-compat_2.1
+ 1-1.1.1.jar guava-20.0.jar neoitertools-1.0.0.jar openblas-0.2.19-1.3
+ -macosx-x86_64.jar log4j-web-2.8.1.jar nd4j-native-0.9.1-windows-x86_
+ 64.jar jackson-core-2.6.5.jar librealsense-1.9.6-1.3.jar htrace-core4
+ -4.0.1-incubating.jar leptonica-1.73-1.3-android-x86.jar hdf5-1.10.0-
+ patch1-1.3-windows-x86.jar nd4j-native-0.9.1-linux-ppc64le.jar hadoop
+ -hdfs-client-2.8.1.jar common-io-3.1.1.jar commons-compress-1.8.jar s
+ park-mllib_2.11-2.2.0.jar deeplearning4j-ui-components-0.9.1.jar data
+ vec-api-0.9.1.jar java-xmlbuilder-1.0.jar avro-ipc-1.7.7.jar activati
+ on-1.1.1.jar protobuf-java-2.5.0.jar metrics-graphite-3.1.2.jar arpac
+ k_combined_all-0.1.jar core-1.1.2.jar annotations-2.0.1.jar hk2-api-2
+ .4.0-b34.jar libfreenect2-0.2.0-1.3.jar jackson-core-asl-1.9.13.jar j
+ ava-image-scaling-0.8.6.jar apacheds-i18n-2.0.0-M15.jar commons-cli-1
+ .2.jar curator-framework-2.6.0.jar ivy-2.4.0.jar commons-configuratio
+ n-1.6.jar hdf5-1.10.0-patch1-1.3-macosx-x86_64.jar objenesis-2.1.jar 
+ opencv-3.2.0-1.3-linux-armhf.jar curator-recipes-2.6.0.jar deeplearni
+ ng4j-modelimport-0.9.1.jar openblas-0.2.19-1.3.jar spark-sketch_2.11-
+ 2.2.0.jar flycapture-2.9.3.43-1.3.jar py4j-0.10.4.jar json4s-jackson_
+ 2.11-3.2.11.jar glazedlists_java16-1.10.0.jar filters-2.0.235.jar hdf
+ 5-1.10.0-patch1-1.3-linux-x86_64.jar json-smart-1.1.1.jar openblas-pl
+ atform-0.2.19-1.3.jar scala-reflect-2.11.7.jar opencv-3.2.0-1.3-andro
+ id-arm.jar commons-digester-1.8.jar commons-io-2.4.jar jersey-common-
+ 2.22.2.jar parquet-common-1.8.2.jar xbean-asm5-shaded-4.4.jar joda-ti
+ me-2.2.jar kryo-shaded-3.0.3.jar leptonica-1.73-1.3-linux-armhf.jar i
+ mageio-psd-3.1.1.jar avro-mapred-1.7.7-hadoop2.jar common-lang-3.1.1.
+ jar opencsv-2.3.jar scalap-2.11.0.jar api-asn1-api-1.0.0-M20.jar json
+ 4s-ast_2.11-3.2.11.jar videoinput-0.200-1.3.jar hadoop-mapreduce-clie
+ nt-common-2.8.1.jar commons-crypto-1.0.0.jar parquet-jackson-1.8.2.ja
+ r stax2-api-3.1.4.jar mx4j-3.0.2.jar hadoop-mapreduce-client-core-2.8
+ .1.jar snappy-java-1.1.2.6.jar hadoop-yarn-server-common-2.8.1.jar hk
+ 2-utils-2.4.0-b34.jar jackson-databind-2.6.5.jar leveldbjni-all-1.8.j
+ ar javax.ws.rs-api-2.0.1.jar spark-sql_2.11-2.2.0.jar findbugs-annota
+ tions-1.3.9-1.jar javacv-1.3.3.jar openblas-0.2.19-1.3-windows-x86_64
+ .jar freemarker-2.3.23.jar okhttp-2.4.0.jar hadoop-yarn-common-2.8.1.
+ jar hdf5-1.10.0-patch1-1.3.jar hadoop-mapreduce-client-jobclient-2.8.
+ 1.jar log4j-1.2.17.jar deeplearning4j-nn-0.9.1.jar osgi-resource-loca
+ tor-1.0.1.jar leptonica-1.73-1.3-windows-x86_64.jar zookeeper-3.4.6.j
+ ar validation-api-1.1.0.Final.jar jersey-client-1.9.jar swing-worker-
+ 1.1.jar opencv-3.2.0-1.3-linux-x86.jar opencv-3.2.0-1.3-windows-x86.j
+ ar leptonica-1.73-1.3-macosx-x86_64.jar javassist-3.18.1-GA.jar metri
+ cs-core-3.1.2.jar shapeless_2.11-2.3.2.jar spire-macros_2.11-0.13.0.j
+ ar hadoop-hdfs-2.8.1.jar log4j-slf4j-impl-2.8.1.jar hadoop-yarn-api-2
+ .8.1.jar avro-1.7.7.jar openblas-0.2.19-1.3-android-arm.jar RoaringBi
+ tmap-0.5.11.jar spark-unsafe_2.11-2.2.0.jar hadoop-common-2.8.1.jar o
+ pencv-3.2.0-1.3.jar nd4j-base64-0.9.1.jar jersey-container-servlet-2.
+ 22.2.jar jcip-annotations-1.0.jar jersey-core-1.9.jar api-util-1.0.0-
+ M20.jar commons-lang3-3.5.jar nimbus-jose-jwt-3.9.jar openblas-0.2.19
+ -1.3-linux-ppc64le.jar unused-1.0.0.jar spark-core_2.11-2.2.0.jar slf
+ 4j-log4j12-1.7.16.jar opencv-3.2.0-1.3-linux-x86_64.jar spark-graphx_
+ 2.11-2.2.0.jar httpcore-4.3.3.jar janino-3.0.0.jar hadoop-auth-2.8.1.
+ jar metrics-json-3.1.2.jar jersey-server-2.22.2.jar nd4j-native-api-0
+ .9.1.jar leptonica-1.73-1.3-linux-x86_64.jar spark-tags_2.11-2.2.0.ja
+ r opencv-3.2.0-1.3-macosx-x86_64.jar pmml-schema-1.2.15.jar commons-l
+ ogging-1.1.3.jar parquet-hadoop-1.8.2.jar lz4-1.3.0.jar javax.servlet
+ -api-3.1.0.jar opencv-3.2.0-1.3-android-x86.jar jackson-module-scala_
+ 2.11-2.6.5.jar spark-streaming_2.11-2.2.0.jar curator-client-2.7.1.ja
+ r jaxb-api-2.2.2.jar jackson-mapper-asl-1.9.13.jar nd4j-native-0.9.1-
+ linux-x86_64.jar lombok-1.16.16.jar spark-launcher_2.11-2.2.0.jar lep
+ tonica-1.73-1.3.jar hadoop-annotations-2.8.1.jar openblas-0.2.19-1.3-
+ linux-x86.jar avro-ipc-1.7.7-tests.jar leptonica-platform-1.73-1.3.ja
+ r hadoop-yarn-client-2.8.1.jar pmml-model-1.2.15.jar leptonica-1.73-1
+ .3-android-arm.jar jackson-0.9.1.jar mail-1.4.7.jar jcl-over-slf4j-1.
+ 7.16.jar nd4j-context-0.9.1.jar nd4j-native-platform-0.9.1.jar nd4j-a
+ pi-0.9.1.jar datavec-data-image-0.9.1.jar hamcrest-core-1.3.jar spark
+ -network-common_2.11-2.2.0.jar spark-catalyst_2.11-2.2.0.jar machinis
+ t_2.11-0.6.1.jar imageio-jpeg-3.1.1.jar commons-codec-1.10.jar lepton
+ ica-1.73-1.3-linux-ppc64le.jar leptonica-1.73-1.3-windows-x86.jar ant
+ lr4-runtime-4.5.3.jar parquet-column-1.8.2.jar jtransforms-2.4.0.jar 
+ jersey-container-servlet-core-2.22.2.jar imageio-tiff-3.1.1.jar aopal
+ liance-repackaged-2.4.0-b34.jar stax-api-1.0-2.jar jackson-xc-1.9.13.
+ jar univocity-parsers-2.2.1.jar leptonica-1.73-1.3-linux-x86.jar comm
+ ons-net-2.2.jar bcprov-jdk15on-1.51.jar reflections-0.9.10.jar spark-
+ mllib-local_2.11-2.2.0.jar okio-1.4.0.jar nd4j-jackson-0.9.1.jar comm
+ on-image-3.1.1.jar jai-imageio-core-1.3.0.jar hk2-locator-2.4.0-b34.j
+ ar swingx-1.6.1.jar scala-compiler-2.11.0.jar nd4j-native-0.9.1-andro
+ id-x86.jar commons-beanutils-1.7.0.jar openblas-0.2.19-1.3-linux-x86_
+ 64.jar jetty-sslengine-6.1.26.jar hdf5-platform-1.10.0-patch1-1.3.jar
+  nd4j-native-0.9.1.jar javax.inject-2.4.0-b34.jar hadoop-client-2.8.1
+ .jar openblas-0.2.19-1.3-linux-armhf.jar libfreenect-0.5.3-1.3.jar ch
+ ill-java-0.8.0.jar opencv-3.2.0-1.3-windows-x86_64.jar parquet-format
+ -2.3.1.jar jetty-util-6.1.26.jar openblas-0.2.19-1.3-android-x86.jar 
+ commons-compiler-3.0.0.jar jets3t-0.9.3.jar pyrolite-4.13.jar spark-n
+ etwork-shuffle_2.11-2.2.0.jar ffmpeg-3.2.1-1.3.jar junit-4.12.jar jac
+ kson-module-paranamer-2.6.5.jar servlet-api-2.5.jar nd4j-native-0.9.1
+ -android-arm.jar jersey-guava-2.22.2.jar jul-to-slf4j-1.7.16.jar base
+ 64-2.3.8.jar parquet-encoding-1.8.2.jar log4j-core-2.8.1.jar jersey-c
+ lient-2.22.2.jar stream-2.7.0.jar jackson-jaxrs-1.9.13.jar commons-ma
+ th3-3.4.1.jar slf4j-api-1.7.25.jar nearestneighbor-core-0.9.1.jar chi
+ ll_2.11-0.8.0.jar metrics-jvm-3.1.2.jar paranamer-2.3.jar jsp-api-2.1
+ .jar breeze-macros_2.11-0.13.1.jar spire_2.11-0.13.0.jar commons-coll
+ ections-3.2.2.jar gson-2.2.4.jar log4j-api-2.8.1.jar oro-2.0.8.jar sc
+ ala-parser-combinators_2.11-1.0.1.jar javacpp-1.3.3.jar nd4j-buffer-0
+ .9.1.jar deeplearning4j-core-0.9.1.jar imageio-bmp-3.1.1.jar commons-
+ beanutils-core-1.8.0.jar xz-1.5.jar hadoop-mapreduce-client-shuffle-2
+ .8.1.jar json4s-core_2.11-3.2.11.jar hdf5-1.10.0-patch1-1.3-linux-ppc
+ 64le.jar httpclient-4.3.6.jar compress-lzf-1.0.3.jar scala-library-2.
+ 11.8.jar flandmark-1.07-1.3.jar nd4j-common-0.9.1.jar xmlenc-0.52.jar
+  jersey-media-jaxb-2.22.2.jar netty-3.9.9.Final.jar libdc1394-2.2.4-1
+ .3.jar netty-all-4.0.43.Final.jar hdf5-1.10.0-patch1-1.3-windows-x86_
+ 64.jar jsr305-1.3.9.jar imageio-core-3.1.1.jar opencv-3.2.0-1.3-linux
+ -ppc64le.jar hadoop-mapreduce-client-app-2.8.1.jar jackson-annotation
+ s-2.6.5.jar snakeyaml-1.12.jar hdf5-1.10.0-patch1-1.3-linux-x86.jar s
+ cala-xml_2.11-1.0.1.jar opencv-platform-3.2.0-1.3.jar deeplearning4j-
+ zoo-0.9.1.jar openblas-0.2.19-1.3-windows-x86.jar artoolkitplus-2.3.1
+ -1.3.jar imageio-metadata-3.1.1.jar nd4j-native-0.9.1-macosx-x86_64.j
+ ar apacheds-kerberos-codec-2.0.0-M15.jar
+Main-Class: ramo.klevis.Run
+
