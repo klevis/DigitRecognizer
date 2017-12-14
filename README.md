@@ -16,7 +16,7 @@ http://ramok.tech/2017/11/29/digit-recognizer-with-neural-networks/
 http://ramok.tech/2017/12/13/java-digit-recognizer-with-convolutional-neural-networks/
 
 <p align="center">
-  <img src="https://i0.wp.com/ramok.tech/wp-content/uploads/2017/12/2017-12-14_01h00_37.jpg?resize=1024%2C537e" width="350"/>
+  <img src="https://i0.wp.com/ramok.tech/wp-content/uploads/2017/12/2017-12-14_01h00_37.jpg?resize=1024%2C537e" width="600"/>
 </p>
 
 
