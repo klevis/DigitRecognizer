@@ -1,7 +1,7 @@
 # http://ramok.tech/machine-learning/
-Java Digit Recognizer Application 
+Java Digit Recognition Application 
 
-Hand Writing Digit Recognizer using Simple Neural Networks with Spark Mlib
+Hand Writing Digit Recognition using Simple Neural Networks with Spark Mlib
 and
 Deep Convolution Neural Network with DeepLearning4j
 
