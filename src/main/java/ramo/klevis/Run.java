@@ -25,7 +25,12 @@ public class Run {
 
         LOGGER.info("Application is starting ... ");
 
-        setHadoopHomeEnvironmentVariable();
+        String os = System.getProperty("os.name").toLowerCase();
+        if(os.contains("win")) {
+            LOGGER.info("Working under Windows OS family requires some additional steps...");
+            setHadoopHomeEnvironmentVariable();
+        }
+
         ProgressBar progressBar = new ProgressBar(mainFrame, true);
         progressBar.showProgressBar("Collecting data this make take several seconds!");
         UI ui = new UI();
